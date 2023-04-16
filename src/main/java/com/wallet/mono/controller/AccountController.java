@@ -32,4 +32,11 @@ public class AccountController {
         return new ResponseEntity<>(accountService.getAccountsByUserId(userId), HttpStatus.OK);
     }
 
+    @GetMapping("{accountId}/user/{userId}")
+    public ResponseEntity<AccountResponse> getAccountDetails(
+            @PathVariable("accountId") Integer accountId,
+            @PathVariable("userId") Integer userId) throws Exception {
+        return new ResponseEntity<>(accountService.getAccountDetails(accountId, userId), HttpStatus.OK);
+    }
+
 }

@@ -6,8 +6,10 @@ import com.wallet.mono.domain.mapper.AccountRequestMapper;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;
 import com.wallet.mono.exception.AccountAlreadyExistsException;
+import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.UserNotFoundException;
 import com.wallet.mono.repository.AccountRepository;
+import com.wallet.mono.repository.UserRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.UserService;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountRequestMapper accountRequestMapper;
     private final AccountResponseMapper accountResponseMapper;
+    private final UserRepository userRepository;
 
     @Override
     public void saveAccount(AccountRequest accountRequest) throws Exception {
@@ -51,6 +54,21 @@ public class AccountServiceImpl implements AccountService {
         List<Account> accounts = accountRepository.findByUser_UserId(userId);
 
         return accountResponseMapper.mapToAccountResponseList(accounts);
+    }
+
+    @Override
+    public AccountResponse getAccountDetails(int accountId, int userId) throws Exception {
+        if (!accountRepository.existsByAccountId(accountId)){
+            throw new AccountNotFoundException();
+        }
+
+        if (!userService.existsUser(userId)) {
+            throw new UserNotFoundException();
+        }
+
+        Account account = accountRepository.findByAccountIdAndUser_UserId(accountId, userId);
+
+        return accountResponseMapper.mapToAccountResponse(account);
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {

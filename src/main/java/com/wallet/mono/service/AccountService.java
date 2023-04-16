@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface AccountService {
     void saveAccount(AccountRequest accountRequest) throws Exception;
-    public List<AccountResponse> getAccountsByUserId(int userId) throws Exception;
+    List<AccountResponse> getAccountsByUserId(int userId) throws Exception;
+    AccountResponse getAccountDetails(int accountId, int userId) throws Exception;
 
 }

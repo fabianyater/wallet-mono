@@ -1,6 +1,7 @@
 package com.wallet.mono.exception.config;
 
 import com.wallet.mono.exception.AccountAlreadyExistsException;
+import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.UserNameAlreadyExistsException;
 import com.wallet.mono.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,13 @@ public class GlobalExceptionHandler {
             UserNotFoundException ignoredNoDataFoundException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.USER_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(AccountNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleAccountNotFoundException(
+            AccountNotFoundException ignoredNoDataFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ACCOUNT_NOT_FOUND.getMessage()));
     }
 
 }
