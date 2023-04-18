@@ -1,5 +1,6 @@
 package com.wallet.mono.service.serviceImpl;
 
+import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
 import com.wallet.mono.domain.mapper.AccountRequestMapper;
@@ -69,6 +70,19 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByAccountIdAndUser_UserId(accountId, userId);
 
         return accountResponseMapper.mapToAccountResponse(account);
+    }
+
+    @Override
+    public AccountBalanceResponse getAccountBalance(int accountId) throws Exception {
+        if (!accountRepository.existsByAccountId(accountId)){
+            throw new AccountNotFoundException();
+        }
+
+        Double balance = accountRepository.findAccountBalance(accountId);
+        AccountBalanceResponse accountBalanceResponse = new AccountBalanceResponse();
+        accountBalanceResponse.setAccountBalance(balance);
+
+        return accountBalanceResponse;
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {

@@ -5,9 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AccountResponse {
-    private String accountId;
-    private String accountName;
-    private String accountCurrency;
+public class AccountBalanceResponse {
     private Double accountBalance;
 }
