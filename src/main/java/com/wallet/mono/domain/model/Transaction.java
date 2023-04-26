@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -26,6 +27,7 @@ public class Transaction {
     private Integer transactionId;
 
     @Column(nullable = false)
+    @Min(0)
     private Double transactionAmount;
 
     private String transactionDescription;
