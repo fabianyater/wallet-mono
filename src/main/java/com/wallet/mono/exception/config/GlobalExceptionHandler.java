@@ -4,6 +4,7 @@ import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.CategoryNotSelectedException;
 import com.wallet.mono.exception.InsufficientBalanceException;
+import com.wallet.mono.exception.TransactionDoesNotExists;
 import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.exception.UserNameAlreadyExistsException;
 import com.wallet.mono.exception.UserNotFoundException;
@@ -66,6 +67,13 @@ public class GlobalExceptionHandler {
             AccountNotFoundException ignoredNoDataFoundException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ACCOUNT_NOT_FOUND.getMessage()));
+    }
+
+    @ExceptionHandler(TransactionDoesNotExists.class)
+    public ResponseEntity<Map<String, String>> handleTransactionDoesNotExists(
+            TransactionDoesNotExists ignoredNoDataFoundException) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.TRANSACTION_DOES_NOT_EXISTS.getMessage()));
     }
 
 }

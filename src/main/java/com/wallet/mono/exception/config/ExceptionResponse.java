@@ -7,7 +7,8 @@ public enum ExceptionResponse {
     ACCOUNT_NOT_FOUND("Account not found"),
     CATEGORY_NOT_SELECTED("Category not selected"),
     TYPE_NOT_SELECTED("Type not selected"),
-    INSUFFICIENT_BALANCE("Insufficient balance");
+    INSUFFICIENT_BALANCE("Insufficient balance"),
+    TRANSACTION_DOES_NOT_EXISTS("Transaction does not exists");
 
     private final String message;
 

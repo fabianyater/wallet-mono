@@ -9,4 +9,5 @@ import java.util.List;
 public interface TransactionService {
     void saveTransaction(TransactionRequest transactionRequest) throws Exception, TypeNotSelectedException;
     List<TransactionResponse> getTransactionsByAccountId(Integer accountId, Integer page, Integer size) throws Exception;
+    TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception;
 }

@@ -11,6 +11,7 @@ import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.enums.TransactionType;
 import com.wallet.mono.exception.CategoryNotSelectedException;
 import com.wallet.mono.exception.InsufficientBalanceException;
+import com.wallet.mono.exception.TransactionDoesNotExists;
 import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
@@ -66,6 +67,18 @@ public class TransactionServiceImpl implements TransactionService {
         Page<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, pageable);
 
         return transactionResponseMapper.mapToTransactionResponseList(transactions);
+    }
+
+    @Override
+    public TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception {
+        accountService.getAccountId(accountId);
+
+        if (!transactionRepository.existsByTransactionId(txnId)){
+            throw new TransactionDoesNotExists();
+        }
+        Transaction transaction = transactionRepository.findByTransactionIdAndAccount_AccountId(txnId, accountId);
+
+        return transactionResponseMapper.mapToTransactionResponse(transaction);
     }
 
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {

@@ -38,4 +38,11 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.getTransactionsByAccountId(accountId, page, size), HttpStatus.OK);
     }
 
+    @GetMapping("{txnId}/account/{accountId}")
+    public ResponseEntity<TransactionResponse> getTransactionDetails(
+            @PathVariable("txnId") Integer txnId,
+            @PathVariable("accountId") Integer accountId) throws Exception {
+        return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, accountId), HttpStatus.OK);
+    }
+
 }

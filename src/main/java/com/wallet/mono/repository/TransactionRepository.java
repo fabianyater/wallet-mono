@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
+    Transaction findByTransactionIdAndAccount_AccountId(Integer transactionId, Integer accountId);
+    boolean existsByTransactionId(Integer transactionId);
     Page<Transaction> findByAccount_AccountId(Integer accountId, Pageable pageable);
 }
