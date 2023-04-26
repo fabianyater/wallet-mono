@@ -79,6 +79,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private boolean hasAvailableBalance(Double balance, Double amount) {
-        return balance >= amount ? true : false;
+        return balance >= amount;
     }
 }
