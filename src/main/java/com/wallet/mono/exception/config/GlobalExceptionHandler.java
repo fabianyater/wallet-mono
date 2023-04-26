@@ -2,6 +2,9 @@ package com.wallet.mono.exception.config;
 
 import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
+import com.wallet.mono.exception.CategoryNotSelectedException;
+import com.wallet.mono.exception.InsufficientBalanceException;
+import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.exception.UserNameAlreadyExistsException;
 import com.wallet.mono.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -28,6 +31,27 @@ public class GlobalExceptionHandler {
             AccountAlreadyExistsException ignoredNoDataFoundException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.ACCOUNT_ALREADY_EXISTS.getMessage()));
+    }
+
+    @ExceptionHandler(CategoryNotSelectedException.class)
+    public ResponseEntity<Map<String, String>> handleCategoryNotSelectedException(
+            CategoryNotSelectedException ignoredNoDataFoundException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CATEGORY_NOT_SELECTED.getMessage()));
+    }
+
+    @ExceptionHandler(TypeNotSelectedException.class)
+    public ResponseEntity<Map<String, String>> handleTypeNotSelectedException(
+            TypeNotSelectedException ignoredNoDataFoundException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.TYPE_NOT_SELECTED.getMessage()));
+    }
+
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<Map<String, String>> handleInsufficientBalanceException(
+            InsufficientBalanceException ignoredNoDataFoundException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INSUFFICIENT_BALANCE.getMessage()));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
