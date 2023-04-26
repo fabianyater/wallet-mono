@@ -3,6 +3,7 @@ package com.wallet.mono.exception.config;
 import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.CategoryNotSelectedException;
+import com.wallet.mono.exception.CustomArithmeticException;
 import com.wallet.mono.exception.InsufficientBalanceException;
 import com.wallet.mono.exception.TransactionDoesNotExists;
 import com.wallet.mono.exception.TypeNotSelectedException;
@@ -53,6 +54,13 @@ public class GlobalExceptionHandler {
             InsufficientBalanceException ignoredNoDataFoundException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.INSUFFICIENT_BALANCE.getMessage()));
+    }
+
+    @ExceptionHandler(CustomArithmeticException.class)
+    public ResponseEntity<Map<String, String>> handleCustomArithmeticException(
+            CustomArithmeticException ignoredNoDataFoundException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.OPERATION_NOT_ALLOWED.getMessage()));
     }
 
     @ExceptionHandler(UserNotFoundException.class)

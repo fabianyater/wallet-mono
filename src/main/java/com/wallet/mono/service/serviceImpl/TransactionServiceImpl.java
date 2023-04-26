@@ -4,23 +4,22 @@ import com.wallet.mono.domain.dto.AccountResponse;
 import com.wallet.mono.domain.dto.TransactionRequest;
 import com.wallet.mono.domain.dto.TransactionResponse;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
+import com.wallet.mono.domain.mapper.CategoryResponseMapper;
 import com.wallet.mono.domain.mapper.TransactionRequestMapper;
 import com.wallet.mono.domain.mapper.TransactionResponseMapper;
 import com.wallet.mono.domain.model.Account;
 import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.enums.TransactionType;
 import com.wallet.mono.exception.CategoryNotSelectedException;
+import com.wallet.mono.exception.CustomArithmeticException;
 import com.wallet.mono.exception.InsufficientBalanceException;
 import com.wallet.mono.exception.TransactionDoesNotExists;
 import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
+import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.service.TransactionService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -37,6 +36,8 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionResponseMapper transactionResponseMapper;
     private final AccountService accountService;
     private final AccountResponseMapper accountResponseMapper;
+    private final CategoryService categoryService;
+    private final CategoryResponseMapper categoryResponseMapper;
 
     @Override
     public void saveTransaction(TransactionRequest transactionRequest) throws Exception {
@@ -61,10 +62,30 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> getTransactionsByAccountId(Integer accountId, Integer page, Integer size) throws Exception {
+    public void saveTaxTransaction(Integer accountId) throws Exception {
+        AccountResponse accountResponse = accountService.getAccountId(accountId);
+        Account account = accountResponseMapper.mapToAccount(accountResponse);
+        Double totalTransactionsAmount = transactionRepository.getTransactionsAmountByAccountId(accountId);
+        Double totalAccountBalance = account.getAccountBalance();
+
+        Transaction transaction = new Transaction();
+
+        transaction.setTransactionAmount(calculateGmf(totalTransactionsAmount, totalAccountBalance, accountId));
+        transaction.setTransactionDescription("IMPUESTO GOBIERNO 4 X 1000");
+        transaction.setCategory(categoryResponseMapper.mapToCategory(categoryService.getTaxCategory()));
+        transaction.setTransactionType(TransactionType.EXPENSE.getValue());
+        transaction.setTransactionDate(LocalDate.now());
+        transaction.setTransactionTime(LocalTime.now());
+        transaction.setAccount(account);
+
+        transactionRepository.save(transaction);
+    }
+
+    @Override
+    public List<TransactionResponse> getTransactionsByAccountId(Integer accountId) throws Exception {
         accountService.getAccountId(accountId);
-        Pageable pageable = PageRequest.of(page, size).withSort(Sort.Direction.ASC, "transactionDate");
-        Page<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, pageable);
+        //Pageable pageable = PageRequest.of(page, size).withSort(Sort.Direction.ASC, "transactionDate");
+        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId);
 
         return transactionResponseMapper.mapToTransactionResponseList(transactions);
     }
@@ -96,6 +117,19 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         accountService.updateAccountBalance(totalBalance, account.getAccountId());
+    }
+
+    private Double calculateGmf(Double totalTransactionsAmount, Double totalAccountBalance, Integer accountId) throws Exception {
+        if (totalTransactionsAmount == null || totalTransactionsAmount == 0){
+            throw new CustomArithmeticException();
+        }
+
+        Double gmf = (totalTransactionsAmount * 4) / 100;
+        totalAccountBalance -= gmf;
+
+        accountService.updateAccountBalance(totalAccountBalance, accountId);
+
+        return gmf;
     }
 
     private boolean hasAvailableBalance(Double balance, Double amount) throws InsufficientBalanceException {

@@ -8,7 +8,8 @@ public enum ExceptionResponse {
     CATEGORY_NOT_SELECTED("Category not selected"),
     TYPE_NOT_SELECTED("Type not selected"),
     INSUFFICIENT_BALANCE("Insufficient balance"),
-    TRANSACTION_DOES_NOT_EXISTS("Transaction does not exists");
+    TRANSACTION_DOES_NOT_EXISTS("Transaction does not exists"),
+    OPERATION_NOT_ALLOWED("Operation not allowed");
 
     private final String message;
 

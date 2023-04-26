@@ -5,7 +5,6 @@ import com.wallet.mono.domain.model.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -23,5 +22,5 @@ public interface TransactionResponseMapper {
     @Mapping(target = "category.categoryName", source = "category.categoryName")
     TransactionResponse mapToTransactionResponse(Transaction transaction);
 
-    List<TransactionResponse> mapToTransactionResponseList(Page<Transaction> transactions);
+    List<TransactionResponse> mapToTransactionResponseList(List<Transaction> transactions);
 }

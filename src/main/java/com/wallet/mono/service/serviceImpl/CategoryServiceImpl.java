@@ -24,4 +24,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         return categoryResponseMapper.mapToCategoryResponseList(categories);
     }
+
+    @Override
+    public CategoryResponse getTaxCategory() {
+        Category category = categoryRepository.findTaxCategory("Tax");
+        return categoryResponseMapper.mapToCategoryResponse(category);
+    }
 }

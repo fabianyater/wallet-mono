@@ -12,6 +12,7 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CategoryResponseMapper {
     CategoryResponse mapToCategoryResponse(Category category);
+    Category mapToCategory(CategoryResponse categoryResponse);
 
     List<CategoryResponse> mapToCategoryResponseList(List<Category> categories);
 }
