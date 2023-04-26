@@ -68,17 +68,21 @@ public class TransactionServiceImpl implements TransactionService {
 
         if (type.equalsIgnoreCase(TransactionType.INCOME.getValue())) {
             totalBalance += transactionAmount;
-        }else if (type.equalsIgnoreCase(TransactionType.EXPENSE.getValue())
+        }
+
+        if (type.equalsIgnoreCase(TransactionType.EXPENSE.getValue())
                 && hasAvailableBalance(totalBalance, transactionAmount)) {
             totalBalance -= transactionAmount;
-        } else {
-            throw new InsufficientBalanceException();
         }
 
         accountService.updateAccountBalance(totalBalance, account.getAccountId());
     }
 
-    private boolean hasAvailableBalance(Double balance, Double amount) {
-        return balance >= amount;
+    private boolean hasAvailableBalance(Double balance, Double amount) throws InsufficientBalanceException {
+        if (balance >= amount){
+            return true;
+        }
+
+        throw new InsufficientBalanceException();
     }
 }
