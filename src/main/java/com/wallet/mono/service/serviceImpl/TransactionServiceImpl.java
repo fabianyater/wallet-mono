@@ -16,6 +16,10 @@ import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.TransactionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -56,8 +60,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> getTransactionsByAccountId(Integer accountId) {
-        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId);
+    public List<TransactionResponse> getTransactionsByAccountId(Integer accountId, Integer page, Integer size) throws Exception {
+        accountService.getAccountId(accountId);
+        Pageable pageable = PageRequest.of(page, size).withSort(Sort.Direction.ASC, "transactionDate");
+        Page<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, pageable);
+
         return transactionResponseMapper.mapToTransactionResponseList(transactions);
     }
 
