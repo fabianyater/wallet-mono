@@ -58,6 +58,17 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AccountResponse getAccountId(int accountId) throws Exception {
+        Account account = accountRepository.findByAccountId(accountId);
+
+        if (account == null) {
+            throw new AccountNotFoundException();
+        }
+
+        return accountResponseMapper.mapToAccountResponse(account);
+    }
+
+    @Override
     public AccountResponse getAccountDetails(int accountId, int userId) throws Exception {
         if (!accountRepository.existsByAccountId(accountId)){
             throw new AccountNotFoundException();
@@ -83,6 +94,12 @@ public class AccountServiceImpl implements AccountService {
         accountBalanceResponse.setAccountBalance(balance);
 
         return accountBalanceResponse;
+    }
+
+    @Override
+    public void updateAccountBalance(Double newBalance, int accountId) throws Exception {
+        getAccountId(accountId);
+        accountRepository.updateAccountBalanceByAccountId(newBalance, accountId);
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {

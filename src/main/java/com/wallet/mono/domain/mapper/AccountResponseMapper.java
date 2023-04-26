@@ -12,6 +12,7 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface AccountResponseMapper {
     AccountResponse mapToAccountResponse(Account account);
+    Account mapToAccount(AccountResponse accountResponse);
 
     List<AccountResponse> mapToAccountResponseList(List<Account> accounts);
 }
