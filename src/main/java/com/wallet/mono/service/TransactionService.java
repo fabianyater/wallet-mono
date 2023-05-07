@@ -1,5 +1,6 @@
 package com.wallet.mono.service;
 
+import com.wallet.mono.domain.dto.TotalAmountResponse;
 import com.wallet.mono.domain.dto.TransactionRequest;
 import com.wallet.mono.domain.dto.TransactionResponse;
 
@@ -10,4 +11,5 @@ public interface TransactionService {
     void saveTaxTransaction(Integer accountId) throws Exception;
     List<TransactionResponse> getTransactionsByAccountId(Integer accountId) throws Exception;
     TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception;
+    TotalAmountResponse getTotalIncomeByAccountId(int accountId);
 }

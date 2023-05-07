@@ -1,5 +1,6 @@
 package com.wallet.mono.controller;
 
+import com.wallet.mono.domain.dto.TotalAmountResponse;
 import com.wallet.mono.domain.dto.TransactionRequest;
 import com.wallet.mono.domain.dto.TransactionResponse;
 import com.wallet.mono.service.TransactionService;
@@ -46,6 +47,12 @@ public class TransactionController {
             @PathVariable("txnId") Integer txnId,
             @PathVariable("accountId") Integer accountId) throws Exception {
         return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, accountId), HttpStatus.OK);
+    }
+
+    @GetMapping("total/account/{accountId}")
+    public ResponseEntity<TotalAmountResponse> getTotalTransactionsAmount(
+            @PathVariable("accountId") Integer accountId) throws Exception {
+        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId), HttpStatus.OK);
     }
 
 }

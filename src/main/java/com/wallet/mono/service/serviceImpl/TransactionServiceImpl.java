@@ -1,6 +1,7 @@
 package com.wallet.mono.service.serviceImpl;
 
 import com.wallet.mono.domain.dto.AccountResponse;
+import com.wallet.mono.domain.dto.TotalAmountResponse;
 import com.wallet.mono.domain.dto.TransactionRequest;
 import com.wallet.mono.domain.dto.TransactionResponse;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
@@ -100,6 +101,17 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionRepository.findByTransactionIdAndAccount_AccountId(txnId, accountId);
 
         return transactionResponseMapper.mapToTransactionResponse(transaction);
+    }
+
+    @Override
+    public TotalAmountResponse getTotalIncomeByAccountId(int accountId) {
+        TotalAmountResponse totalAmountResponse = new TotalAmountResponse();
+        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByAccountId(accountId);
+
+        totalAmountResponse.setExpense(totalAmount.get(0));
+        totalAmountResponse.setIncome(totalAmount.get(1));
+
+        return totalAmountResponse;
     }
 
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {

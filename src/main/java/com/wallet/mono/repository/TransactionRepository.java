@@ -20,4 +20,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             "on t.account_id = a.id \n" +
             "where a.id = :accountId and t.transaction_type = 'expense' and c.category_name <> 'tax'", nativeQuery = true)
     Double getTransactionsAmountByAccountId(@Param("accountId") Integer accountId);
+
+    @Query(value = "select sum(t.transaction_amount) from transactions t \n" +
+            "inner join accounts a \n" +
+            "on t.account_id = a.id \n" +
+            "where a.id = :accountId\n" +
+            "group by t.transaction_type", nativeQuery = true)
+    List<Double> getTotalTransactionAmountByAccountId(@Param("accountId") Integer accountId);
 }
