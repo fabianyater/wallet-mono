@@ -1,18 +1,15 @@
 package com.wallet.mono.controller;
 
+import com.wallet.mono.domain.dto.ListTransactionResponse;
 import com.wallet.mono.domain.dto.TotalAmountResponse;
 import com.wallet.mono.domain.dto.TransactionRequest;
 import com.wallet.mono.domain.dto.TransactionResponse;
 import com.wallet.mono.service.TransactionService;
+import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,8 +35,29 @@ public class TransactionController {
     }
 
     @GetMapping("account/{accountId}")
-    public ResponseEntity<List<TransactionResponse>> getTransactions(@PathVariable("accountId") Integer accountId) throws Exception {
-        return new ResponseEntity<>(transactionService.getTransactionsByAccountId(accountId), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<ListTransactionResponse>> getTransactions(
+            @PathVariable("accountId") Integer accountId,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
+        try {
+            ListTransactionResponse transactionResponses = transactionService.getTransactionsByAccountId(accountId, page - 1, size);
+            ApiResponse<ListTransactionResponse> apiResponse = new ApiResponse<>();
+
+            ApiResponse.Pagination pagination = new ApiResponse.Pagination();
+            pagination.setCurrentPage(page);
+            pagination.setTotalItems(transactionResponses.getTotalTransactions());
+            pagination.setItemsPerPage(size);
+            pagination.setTotalPages(pagination.getTotalItems() / pagination.getItemsPerPage());
+
+            apiResponse.setStatus(HttpStatus.OK.toString());
+            apiResponse.setMessage("Transaction data retrieved successfully.");
+            apiResponse.setPagination(pagination);
+            apiResponse.setData(transactionResponses);
+
+            return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(new ApiResponse<>(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("{txnId}/account/{accountId}")

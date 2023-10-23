@@ -12,6 +12,6 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://db.mdekzsvjiinhsjhywdux.supabase.co:5432/postgres?user=postgres&password=Ynmhfn99**-1234
+    url: jdbc:postgresql://localhost:5432/wallet
     username: postgres
-    password: Ynmhfn99**-1234
+    password: postgres

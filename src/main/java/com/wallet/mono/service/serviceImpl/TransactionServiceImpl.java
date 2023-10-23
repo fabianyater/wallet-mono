@@ -1,13 +1,7 @@
 package com.wallet.mono.service.serviceImpl;
 
-import com.wallet.mono.domain.dto.AccountResponse;
-import com.wallet.mono.domain.dto.TotalAmountResponse;
-import com.wallet.mono.domain.dto.TransactionRequest;
-import com.wallet.mono.domain.dto.TransactionResponse;
-import com.wallet.mono.domain.mapper.AccountResponseMapper;
-import com.wallet.mono.domain.mapper.CategoryResponseMapper;
-import com.wallet.mono.domain.mapper.TransactionRequestMapper;
-import com.wallet.mono.domain.mapper.TransactionResponseMapper;
+import com.wallet.mono.domain.dto.*;
+import com.wallet.mono.domain.mapper.*;
 import com.wallet.mono.domain.model.Account;
 import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.enums.TransactionType;
@@ -21,6 +15,10 @@ import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.service.TransactionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -83,19 +81,26 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> getTransactionsByAccountId(Integer accountId) throws Exception {
+    public ListTransactionResponse getTransactionsByAccountId(Integer accountId, int page, int size) throws Exception {
         accountService.getAccountId(accountId);
-        //Pageable pageable = PageRequest.of(page, size).withSort(Sort.Direction.ASC, "transactionDate");
-        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC,"transactionDate", "transactionTime");
+        Page<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, pageable);
 
-        return transactionResponseMapper.mapToTransactionResponseList(transactions);
+        List<TransactionResponse> transactionResponses = transactionResponseMapper.mapToTransactionResponseList(transactions);
+        ListTransactionResponse listTransactionResponse = new ListTransactionResponse();
+        Long totalTransactions = transactionRepository.countByAccount_AccountId(accountId);
+
+        listTransactionResponse.setTotalTransactions(totalTransactions);
+        listTransactionResponse.setTransactions(transactionResponses);
+
+        return listTransactionResponse;
     }
 
     @Override
     public TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception {
         accountService.getAccountId(accountId);
 
-        if (!transactionRepository.existsByTransactionId(txnId)){
+        if (!transactionRepository.existsByTransactionId(txnId)) {
             throw new TransactionDoesNotExists();
         }
         Transaction transaction = transactionRepository.findByTransactionIdAndAccount_AccountId(txnId, accountId);
@@ -132,7 +137,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private Double calculateGmf(Double totalTransactionsAmount, Double totalAccountBalance, Integer accountId) throws Exception {
-        if (totalTransactionsAmount == null || totalTransactionsAmount == 0){
+        if (totalTransactionsAmount == null || totalTransactionsAmount == 0) {
             throw new CustomArithmeticException();
         }
 
@@ -145,7 +150,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private boolean hasAvailableBalance(Double balance, Double amount) throws InsufficientBalanceException {
-        if (balance >= amount){
+        if (balance >= amount) {
             return true;
         }
 

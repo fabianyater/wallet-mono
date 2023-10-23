@@ -13,4 +13,5 @@ public interface AccountService {
     AccountResponse getAccountDetails(int accountId, int userId) throws Exception;
     AccountBalanceResponse getAccountBalance(int accountId) throws Exception;
     void updateAccountBalance(Double newBalance, int accountId) throws Exception;
+    void updateAccount(int accountId, AccountRequest accountRequest) throws Exception;
 }

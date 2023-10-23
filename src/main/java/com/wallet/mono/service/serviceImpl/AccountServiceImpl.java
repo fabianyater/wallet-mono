@@ -102,6 +102,21 @@ public class AccountServiceImpl implements AccountService {
         accountRepository.updateAccountBalanceByAccountId(newBalance, accountId);
     }
 
+    @Override
+    public void updateAccount(int accountId, AccountRequest accountRequest) throws Exception {
+        AccountResponse accountResponse = getAccountDetails(accountId, Integer.parseInt(accountRequest.getUserId()));
+
+        accountResponse.setAccountName(accountRequest.getAccountName());
+        accountResponse.setAccountCurrency(accountRequest.getAccountCurrency());
+        accountResponse.setAccountBalance(accountRequest.getAccountBalance());
+        accountResponse.setUserId(Integer.parseInt(accountRequest.getUserId()));
+
+        Account account = accountResponseMapper.mapToAccount(accountResponse);
+
+        accountRepository.save(account);
+
+    }
+
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {
         return accountResponses.stream().anyMatch(accountResponse -> accountResponse.getAccountName().equals(name));
     }

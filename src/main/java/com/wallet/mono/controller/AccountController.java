@@ -7,12 +7,7 @@ import com.wallet.mono.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,6 +39,14 @@ public class AccountController {
     public ResponseEntity<AccountBalanceResponse> getAccountBalance(
             @PathVariable("accountId") Integer accountId) throws Exception {
         return new ResponseEntity<>(accountService.getAccountBalance(accountId), HttpStatus.OK);
+    }
+
+    @PutMapping("{accountId}")
+    public ResponseEntity<Void> updateAccount(
+            @PathVariable("accountId") Integer accountId,
+            @RequestBody AccountRequest accountRequest) throws Exception {
+        accountService.updateAccount(accountId, accountRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
