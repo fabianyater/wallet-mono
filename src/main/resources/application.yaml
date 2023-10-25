@@ -12,6 +12,6 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/wallet
-    username: postgres
-    password: postgres
+    url: ${CONNECTION_STRING}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
