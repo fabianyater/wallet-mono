@@ -12,6 +12,11 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Transactional
     @Modifying
+    @Query("update Account a set a.isFavorite = ?1 where a.accountId = ?2")
+    void updateIsFavoriteByAccountId(boolean isFavorite, Integer accountId);
+
+    @Transactional
+    @Modifying
     @Query("update Account a set a.accountBalance = ?1 where a.accountId = ?2")
     int updateAccountBalanceByAccountId(Double accountBalance, Integer accountId);
     Account findByAccountId(Integer accountId);

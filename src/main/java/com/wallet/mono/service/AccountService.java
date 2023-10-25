@@ -3,6 +3,7 @@ package com.wallet.mono.service;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
+import com.wallet.mono.domain.dto.FavoriteRequest;
 
 import java.util.List;
 
@@ -14,4 +15,5 @@ public interface AccountService {
     AccountBalanceResponse getAccountBalance(int accountId) throws Exception;
     void updateAccountBalance(Double newBalance, int accountId) throws Exception;
     void updateAccount(int accountId, AccountRequest accountRequest) throws Exception;
+    void updateDefaultAccount(FavoriteRequest favoriteRequest) throws Exception;
 }

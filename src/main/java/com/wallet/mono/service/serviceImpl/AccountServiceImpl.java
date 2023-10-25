@@ -3,6 +3,7 @@ package com.wallet.mono.service.serviceImpl;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
+import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.domain.mapper.AccountRequestMapper;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;
@@ -17,7 +18,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Transactional
@@ -37,7 +40,7 @@ public class AccountServiceImpl implements AccountService {
 
         List<AccountResponse> accounts = getAccountsByUserId(Integer.parseInt(accountRequest.getUserId()));
 
-        if (accountNameAlreadyExists(accounts, accountRequest.getAccountName())){
+        if (accountNameAlreadyExists(accounts, accountRequest.getAccountName())) {
             throw new AccountAlreadyExistsException();
         }
 
@@ -53,6 +56,8 @@ public class AccountServiceImpl implements AccountService {
         }
 
         List<Account> accounts = accountRepository.findByUser_UserId(userId);
+
+        accounts.sort(Comparator.comparing(Account::isFavorite).reversed());
 
         return accountResponseMapper.mapToAccountResponseList(accounts);
     }
@@ -70,7 +75,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponse getAccountDetails(int accountId, int userId) throws Exception {
-        if (!accountRepository.existsByAccountId(accountId)){
+        if (!accountRepository.existsByAccountId(accountId)) {
             throw new AccountNotFoundException();
         }
 
@@ -85,7 +90,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountBalanceResponse getAccountBalance(int accountId) throws Exception {
-        if (!accountRepository.existsByAccountId(accountId)){
+        if (!accountRepository.existsByAccountId(accountId)) {
             throw new AccountNotFoundException();
         }
 
@@ -115,6 +120,22 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(account);
 
+    }
+
+    @Override
+    public void updateDefaultAccount(FavoriteRequest favoriteRequest) throws Exception {
+        int userId = favoriteRequest.getUserId();
+        int accountId = favoriteRequest.getAccountId();
+
+        Optional<AccountResponse> oldDefaultAccount = getAccountsByUserId(userId)
+                .stream()
+                .filter(AccountResponse::isFavorite)
+                .findFirst();
+
+        oldDefaultAccount.ifPresent(accountResponse -> accountRepository
+                .updateIsFavoriteByAccountId(false, Integer.parseInt(accountResponse.getAccountId())));
+
+        accountRepository.updateIsFavoriteByAccountId(true, accountId);
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {

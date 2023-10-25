@@ -3,6 +3,7 @@ package com.wallet.mono.controller;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
+import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.service.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,4 +50,10 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("favorite")
+    public ResponseEntity<Void> updateDefaultAccount(
+            @RequestBody FavoriteRequest favoriteRequest) throws Exception {
+        accountService.updateDefaultAccount(favoriteRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

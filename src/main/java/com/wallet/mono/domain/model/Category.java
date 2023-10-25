@@ -21,4 +21,8 @@ public class Category {
     private Integer categoryId;
 
     private String categoryName;
+
+    @Column(name = "type")
+    private String type;
+
 }

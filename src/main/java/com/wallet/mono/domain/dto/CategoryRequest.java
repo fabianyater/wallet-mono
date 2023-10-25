@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CategoryResponse {
-    private Integer categoryId;
+public class CategoryRequest {
     private String categoryName;
     private String type;
 }

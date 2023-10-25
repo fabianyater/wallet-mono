@@ -1,6 +1,8 @@
 package com.wallet.mono.service.serviceImpl;
 
+import com.wallet.mono.domain.dto.CategoryRequest;
 import com.wallet.mono.domain.dto.CategoryResponse;
+import com.wallet.mono.domain.mapper.CategoryRequestMapper;
 import com.wallet.mono.domain.mapper.CategoryResponseMapper;
 import com.wallet.mono.domain.model.Category;
 import com.wallet.mono.repository.CategoryRepository;
@@ -17,6 +19,13 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryResponseMapper categoryResponseMapper;
+    private final CategoryRequestMapper categoryRequestMapper;
+
+    @Override
+    public void addCategory(CategoryRequest categoryRequest) {
+        Category category = categoryRequestMapper.mapToCategory(categoryRequest);
+        categoryRepository.save(category);
+    }
 
     @Override
     public List<CategoryResponse> getCategories() {
