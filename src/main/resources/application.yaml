@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: dev
   jpa:
     database: POSTGRESQL
     show-sql: true
@@ -10,6 +12,20 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
       ddl-auto: update
 
+---
+
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/wallet
+    username: postgres
+    password: postgres
+
+---
+
+spring:
+  profiles: prod
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${CONNECTION_STRING}
