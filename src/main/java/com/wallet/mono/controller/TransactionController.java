@@ -49,7 +49,7 @@ public class TransactionController {
             pagination.setItemsPerPage(size);
             pagination.setTotalPages(pagination.getTotalItems() / pagination.getItemsPerPage());
 
-            apiResponse.setStatus(HttpStatus.OK.toString());
+            apiResponse.setStatus(HttpStatus.OK.value());
             apiResponse.setMessage("Transaction data retrieved successfully.");
             apiResponse.setPagination(pagination);
             apiResponse.setData(transactionResponses);
@@ -71,6 +71,13 @@ public class TransactionController {
     public ResponseEntity<TotalAmountResponse> getTotalTransactionsAmount(
             @PathVariable("accountId") Integer accountId) throws Exception {
         return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId), HttpStatus.OK);
+    }
+
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
+        transactionService.deleteAllTransactions(accountId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -13,4 +13,5 @@ public interface TransactionService {
     ListTransactionResponse getTransactionsByAccountId(Integer accountId, int page, int size) throws Exception;
     TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception;
     TotalAmountResponse getTotalIncomeByAccountId(int accountId);
+    void deleteAllTransactions(int accountId);
 }

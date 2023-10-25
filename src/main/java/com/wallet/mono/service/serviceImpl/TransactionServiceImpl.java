@@ -119,6 +119,14 @@ public class TransactionServiceImpl implements TransactionService {
         return totalAmountResponse;
     }
 
+    @Override
+    public void deleteAllTransactions(int accountId) {
+        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, Pageable.unpaged()).getContent();
+
+        List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
+        transactionRepository.deleteAllById(transactionIds);
+    }
+
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {
         Double totalBalance = account.getAccountBalance();
         Double transactionAmount = transaction.getTransactionAmount();
