@@ -11,7 +11,6 @@ import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.UserNotFoundException;
 import com.wallet.mono.repository.AccountRepository;
-import com.wallet.mono.repository.UserRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.UserService;
 import lombok.AllArgsConstructor;
@@ -30,7 +29,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountRequestMapper accountRequestMapper;
     private final AccountResponseMapper accountResponseMapper;
-    private final UserRepository userRepository;
 
     @Override
     public void saveAccount(AccountRequest accountRequest) throws Exception {
@@ -136,6 +134,12 @@ public class AccountServiceImpl implements AccountService {
                 .updateIsFavoriteByAccountId(false, Integer.parseInt(accountResponse.getAccountId())));
 
         accountRepository.updateIsFavoriteByAccountId(true, accountId);
+    }
+
+    @Override
+    public void deleteAccount(FavoriteRequest favoriteRequest) throws Exception {
+        getAccountDetails(favoriteRequest.getAccountId(), favoriteRequest.getUserId());
+        accountRepository.deleteById(favoriteRequest.getAccountId());
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {

@@ -16,4 +16,5 @@ public interface AccountService {
     void updateAccountBalance(Double newBalance, int accountId) throws Exception;
     void updateAccount(int accountId, AccountRequest accountRequest) throws Exception;
     void updateDefaultAccount(FavoriteRequest favoriteRequest) throws Exception;
+    void deleteAccount(FavoriteRequest favoriteRequest) throws Exception;
 }
