@@ -9,6 +9,7 @@ import com.wallet.mono.exception.TransactionDoesNotExists;
 import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.exception.UserNameAlreadyExistsException;
 import com.wallet.mono.exception.UserNotFoundException;
+import com.wallet.mono.utils.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,10 +23,14 @@ public class GlobalExceptionHandler {
     private static final String MESSAGE = "message";
 
     @ExceptionHandler(UserNameAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleUserNameAlreadyExistsException(
+    public ResponseEntity<ApiResponse<Object>> handleUserNameAlreadyExistsException(
             UserNameAlreadyExistsException ignoredNoDataFoundException) {
+        ApiResponse<Object> errorResponse = new ApiResponse<>();
+        errorResponse.setMessage(ExceptionResponse.USER_NAME_ALREADY_EXISTS.getMessage());
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Collections.singletonMap(MESSAGE, ExceptionResponse.USER_NAME_ALREADY_EXISTS.getMessage()));
+                .body(errorResponse);
     }
 
     @ExceptionHandler(AccountAlreadyExistsException.class)

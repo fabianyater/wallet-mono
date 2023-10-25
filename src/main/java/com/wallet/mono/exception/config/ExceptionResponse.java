@@ -1,15 +1,15 @@
 package com.wallet.mono.exception.config;
 
 public enum ExceptionResponse {
-    USER_NAME_ALREADY_EXISTS("User name already exists"),
-    ACCOUNT_ALREADY_EXISTS("Account already exists"),
-    USER_NOT_FOUND("User not found"),
-    ACCOUNT_NOT_FOUND("Account not found"),
-    CATEGORY_NOT_SELECTED("Category not selected"),
-    TYPE_NOT_SELECTED("Type not selected"),
-    INSUFFICIENT_BALANCE("Insufficient balance"),
-    TRANSACTION_DOES_NOT_EXISTS("Transaction does not exists"),
-    OPERATION_NOT_ALLOWED("Operation not allowed");
+    USER_NAME_ALREADY_EXISTS("Nombre de usuario ya existe"),
+    ACCOUNT_ALREADY_EXISTS("Esta cuenta ya existe"),
+    USER_NOT_FOUND("Usuario no encontrado"),
+    ACCOUNT_NOT_FOUND("Cuenta no encontrada"),
+    CATEGORY_NOT_SELECTED("Categoría no seleccionada"),
+    TYPE_NOT_SELECTED("Tipo de movimiento no seleccionado"),
+    INSUFFICIENT_BALANCE("Saldo insuficiente"),
+    TRANSACTION_DOES_NOT_EXISTS("Este movimiento no existe"),
+    OPERATION_NOT_ALLOWED("Operación no permitida");
 
     private final String message;
 
