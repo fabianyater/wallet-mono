@@ -43,7 +43,7 @@ jobs:
 
         # Transfer Docker image to EC2
         docker save fabianyr/wallet:latest | gzip -c > wallet.tar.gz
-        scp -i "private_key.pem" wallet.tar.gz $USERNAME@$HOST:~/
+        scp -i "private_key.pem" -o StrictHostKeyChecking=no wallet.tar.gz $USERNAME@$HOST:~/
 
         # Commands to run on EC2
         ssh -i private_key.pem $USERNAME@$HOST "
