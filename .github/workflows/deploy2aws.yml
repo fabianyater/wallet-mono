@@ -35,7 +35,6 @@ jobs:
     - name: Deploy to EC2
       env:
         HOST: ${{ secrets.HOST }}
-        PORT: ${{ secrets.PORT }}
         USERNAME: ${{ secrets.USERNAME }}
         PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       run: |
@@ -44,10 +43,10 @@ jobs:
 
         # Transfer Docker image to EC2
         docker save fabianyr/wallet:latest | gzip -c > wallet.tar.gz
-        scp -i private_key.pem -P $PORT wallet.tar.gz $USERNAME@$HOST:~/
+        scp -i private_key.pem wallet.tar.gz $USERNAME@$HOST:~/
 
         # Commands to run on EC2
-        ssh -i private_key.pem -p $PORT $USERNAME@$HOST "
+        ssh -i private_key.pem $USERNAME@$HOST "
           docker load -i ~/wallet.tar.gz
           docker container stop wallet-container || true
           docker container rm wallet-container || true
