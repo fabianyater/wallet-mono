@@ -46,4 +46,4 @@ jobs:
       - name: Remove old Docker Container
         run: sudo docker rm -f wallet-container
       - name: Run Docker Container
-        run: sudo docker run -e CONNECTION=${{secrets.CONNECTION_STRING}} -d -p 8080:8080 --name wallet-container fabianyr/wallet:latest
+        run: sudo docker run -e CONNECTION_STRING=${{secrets.CONNECTION_STRING}} -d -p 8080:8080 --name wallet-container fabianyr/wallet:latest
