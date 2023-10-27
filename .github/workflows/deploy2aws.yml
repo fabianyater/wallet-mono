@@ -25,13 +25,13 @@ jobs:
         run: ./gradlew clean build
 
       - name: Login to Docker Hub
-      - run: docker login -u ${{secrets.DOCKERHUB_USERNAME}} -p ${{DOCKERHUB_PASSWORD}}
+        run: docker login -u ${{secrets.DOCKERHUB_USERNAME}} -p ${{DOCKERHUB_PASSWORD}}
 
       - name: Build Docker image
         run: |
           docker build -t fabianyr/wallet:latest .
       - name: Publish image to docker hub
-      - run: docker push fabianyr/wallet:latest
+        run: docker push fabianyr/wallet:latest
   deploy:
     needs: build
     runs-on: aws-ec2
