@@ -42,8 +42,8 @@ jobs:
             newgrp docker
 
       - name: Pull the image from docker
-        run: docker pull fabianyr/wallet:latest
+        run: sudo docker pull fabianyr/wallet:latest
       - name: Remove old Docker Container
-        run: docker rm -f wallet-container
+        run: sudo docker rm -f wallet-container
       - name: Run Docker Container
-        run: docker run -d -p 8080:8080 --name wallet-container fabianyr/wallet:latest
+        run: sudo docker run -d -p 8080:8080 --name wallet-container fabianyr/wallet:latest
