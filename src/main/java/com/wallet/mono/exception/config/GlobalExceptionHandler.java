@@ -1,14 +1,6 @@
 package com.wallet.mono.exception.config;
 
-import com.wallet.mono.exception.AccountAlreadyExistsException;
-import com.wallet.mono.exception.AccountNotFoundException;
-import com.wallet.mono.exception.CategoryNotSelectedException;
-import com.wallet.mono.exception.CustomArithmeticException;
-import com.wallet.mono.exception.InsufficientBalanceException;
-import com.wallet.mono.exception.TransactionDoesNotExists;
-import com.wallet.mono.exception.TypeNotSelectedException;
-import com.wallet.mono.exception.UserNameAlreadyExistsException;
-import com.wallet.mono.exception.UserNotFoundException;
+import com.wallet.mono.exception.*;
 import com.wallet.mono.utils.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -87,6 +79,17 @@ public class GlobalExceptionHandler {
             TransactionDoesNotExists ignoredNoDataFoundException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.TRANSACTION_DOES_NOT_EXISTS.getMessage()));
+    }
+
+    @ExceptionHandler(TransactionError.class)
+    public ResponseEntity<ApiResponse<Object>> handleTransactionError(
+            TransactionError ignoredNoDataFoundException) {
+        ApiResponse<Object> errorResponse = new ApiResponse<>();
+        errorResponse.setMessage(ExceptionResponse.UNABLE_TO_DELETE_TRANSACTIONS.getMessage());
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(errorResponse);
     }
 
 }

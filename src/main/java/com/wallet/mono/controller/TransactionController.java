@@ -75,9 +75,15 @@ public class TransactionController {
 
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
-        transactionService.deleteAllTransactions(accountId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<ApiResponse<Boolean>> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
+        Boolean result = transactionService.deleteAllTransactions(accountId);
+        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        apiResponse.setData(result);
+        apiResponse.setMessage(!result ? "No hay transacciones para eliminar" : "Transacciones eliminidas");
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setPagination(null);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
 }

@@ -9,7 +9,8 @@ public enum ExceptionResponse {
     TYPE_NOT_SELECTED("Tipo de movimiento no seleccionado"),
     INSUFFICIENT_BALANCE("Saldo insuficiente"),
     TRANSACTION_DOES_NOT_EXISTS("Este movimiento no existe"),
-    OPERATION_NOT_ALLOWED("Operación no permitida");
+    OPERATION_NOT_ALLOWED("Operación no permitida"),
+    UNABLE_TO_DELETE_TRANSACTIONS("No es posible eliminar las transacciones");
 
     private final String message;
 

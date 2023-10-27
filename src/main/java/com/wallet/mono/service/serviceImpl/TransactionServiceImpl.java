@@ -120,13 +120,16 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void deleteAllTransactions(int accountId) {
+    public Boolean deleteAllTransactions(int accountId) {
         List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, Pageable.unpaged()).getContent();
 
         if (!transactions.isEmpty()) {
             List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
             transactionRepository.deleteAllById(transactionIds);
+            return true;
         }
+
+        return false;
     }
 
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {
@@ -151,7 +154,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new CustomArithmeticException();
         }
 
-        Double gmf = (totalTransactionsAmount * 4) / 100;
+        double gmf = (totalTransactionsAmount * 4) / 100;
         totalAccountBalance -= gmf;
 
         accountService.updateAccountBalance(totalAccountBalance, accountId);
