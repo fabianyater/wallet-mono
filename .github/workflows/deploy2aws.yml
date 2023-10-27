@@ -36,8 +36,13 @@ jobs:
     needs: build
     runs-on: aws-ec2
     steps:
+      - name: Set user permissions for Docker
+        run: |
+            sudo usermod -aG docker ${USER}
+            newgrp docker
+
       - name: Pull the image from docker
-        run: sudo docker pull fabianyr/wallet:latest
+        run: docker pull fabianyr/wallet:latest
       - name: Remove old Docker Container
         run: docker rm -f wallet-container
       - name: Run Docker Container
