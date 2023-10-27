@@ -83,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public ListTransactionResponse getTransactionsByAccountId(Integer accountId, int page, int size) throws Exception {
         accountService.getAccountId(accountId);
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC,"transactionDate", "transactionTime");
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "transactionDate", "transactionTime");
         Page<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, pageable);
 
         List<TransactionResponse> transactionResponses = transactionResponseMapper.mapToTransactionResponseList(transactions);
@@ -123,8 +123,10 @@ public class TransactionServiceImpl implements TransactionService {
     public void deleteAllTransactions(int accountId) {
         List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, Pageable.unpaged()).getContent();
 
-        List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
-        transactionRepository.deleteAllById(transactionIds);
+        if (!transactions.isEmpty()) {
+            List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
+            transactionRepository.deleteAllById(transactionIds);
+        }
     }
 
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {
