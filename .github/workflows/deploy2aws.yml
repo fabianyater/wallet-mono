@@ -6,49 +6,39 @@ on:
       - main
 
 jobs:
-  build_and_deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Give exec permissions to gradlew
-      run: chmod +x ./gradlew
+      - name: Give exec permissions to gradlew
+        run: chmod +x ./gradlew
 
-    - name: Config Java 17
-      uses: actions/setup-java@v2
-      with:
-        distribution: 'temurin' 
-        java-version: '17'
+      - name: Config Java 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Build with Gradle
-      run: ./gradlew clean build
+      - name: Build with Gradle
+        run: ./gradlew clean build
 
-    - name: Build Docker image
-      run: |
-        docker build -t fabianyr/wallet:latest .
+      - name: Login to Docker Hub
+      - run: docker login -u ${{secrets.DOCKERHUB_USERNAME}} -p ${{DOCKERHUB_PASSWORD}}
 
-    - name: Install SSH Client
-      run: sudo apt-get install -y ssh-client
-
-    - name: Deploy to EC2
-      env:
-        HOST: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      run: |
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-
-        # Transfer Docker image to EC2
-        docker save fabianyr/wallet:latest | gzip -c > wallet.tar.gz
-        scp -i "private_key.pem" -o StrictHostKeyChecking=no wallet.tar.gz $USERNAME@$HOST:~/
-
-        # Commands to run on EC2
-        ssh -i private_key.pem $USERNAME@$HOST "
-          docker load -i ~/wallet.tar.gz
-          docker container stop wallet-container || true
-          docker container rm wallet-container || true
-          docker run -d --name wallet-container -p 8080:8080 wallet
-        "
+      - name: Build Docker image
+        run: |
+          docker build -t fabianyr/wallet:latest .
+      - name: Publish image to docker hub
+      - run: docker push fabianyr/wallet:latest
+  deploy:
+    needs: build
+    runs-on: aws-ec2
+    steps:
+      - name: Pull the image from docker
+        run: docker pull fabianyr/wallet:latest
+      - name: Remove old Docker Container
+        run: docker rm -f wallet-container
+      - name: Run Docker Container
+        run: docker run -d -p 8080:8080 --name wallet-container fabianyr/wallet:latest
