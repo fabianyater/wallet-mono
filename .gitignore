@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+
+./create-new-branch.sh
