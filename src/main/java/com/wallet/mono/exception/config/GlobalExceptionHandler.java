@@ -39,6 +39,39 @@ public class GlobalExceptionHandler {
                 .body(Collections.singletonMap(MESSAGE, ExceptionResponse.CATEGORY_NOT_SELECTED.getMessage()));
     }
 
+    @ExceptionHandler(CategoryAlreadyExists.class)
+    public ResponseEntity<ApiResponse<Object>> handleCategoryAlreadyExists(
+            CategoryAlreadyExists categoryAlreadyExists) {
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage(ExceptionResponse.CATEGORY_ALREADY_EXISTS.getMessage());
+        apiResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(apiResponse);
+    }
+
+    @ExceptionHandler(CategoryAlreadyDoesNotExists.class)
+    public ResponseEntity<ApiResponse<Object>> handleCategoryAlreadyDoesNotExists(
+            CategoryAlreadyDoesNotExists categoryAlreadyDoesNotExists) {
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage(ExceptionResponse.CATEGORY_DOES_NOT_EXIXTS.getMessage());
+        apiResponse.setStatus(HttpStatus.NOT_FOUND.value());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(apiResponse);
+    }
+
+    @ExceptionHandler(DefatulCategory.class)
+    public ResponseEntity<ApiResponse<Object>> handleDefatulCategory(
+            DefatulCategory defatulCategory) {
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage(ExceptionResponse.DEFAULT_CATEGORY.getMessage());
+        apiResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(apiResponse);
+    }
+
     @ExceptionHandler(TypeNotSelectedException.class)
     public ResponseEntity<Map<String, String>> handleTypeNotSelectedException(
             TypeNotSelectedException ignoredNoDataFoundException) {
