@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 
 @Getter
 @Setter
@@ -24,5 +26,9 @@ public class Category {
 
     @Column(name = "type")
     private String type;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }
