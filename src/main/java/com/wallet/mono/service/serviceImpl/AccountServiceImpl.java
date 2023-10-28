@@ -43,6 +43,11 @@ public class AccountServiceImpl implements AccountService {
         }
 
         Account account = accountRequestMapper.mapToAccount(accountRequest);
+
+        if  (accounts.isEmpty()) {
+            account.setFavorite(true);
+        }
+
         accountRepository.save(account);
 
     }
