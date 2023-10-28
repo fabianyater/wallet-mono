@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CategoryResponse {
-    private String categoryName;
-    private String type;
+public class CategoryDeleteRequest {
+    private int categoryId;
+    private int userId;
 }

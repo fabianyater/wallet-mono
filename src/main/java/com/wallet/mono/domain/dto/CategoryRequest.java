@@ -8,4 +8,5 @@ import lombok.Setter;
 public class CategoryRequest {
     private String categoryName;
     private String type;
+    private int userId;
 }
