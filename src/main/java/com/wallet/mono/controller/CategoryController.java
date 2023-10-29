@@ -6,6 +6,7 @@ import com.wallet.mono.domain.dto.CategoryResponse;
 import com.wallet.mono.exception.CategoryAlreadyDoesNotExists;
 import com.wallet.mono.exception.CategoryAlreadyExists;
 import com.wallet.mono.exception.DefatulCategory;
+import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> addCategory(@Valid @RequestBody CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory {
+    public ResponseEntity<ApiResponse<Void>> addCategory(@Valid @RequestBody CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory, TypeNotSelectedException {
         categoryService.addCategory(categoryRequest);
         ApiResponse<Void> apiResponse = new ApiResponse<>();
         apiResponse.setMessage("Categoría agregada correctamente");
