@@ -7,12 +7,13 @@ import com.wallet.mono.domain.dto.CategoryResponse;
 import com.wallet.mono.exception.CategoryAlreadyDoesNotExists;
 import com.wallet.mono.exception.CategoryAlreadyExists;
 import com.wallet.mono.exception.DefatulCategory;
+import com.wallet.mono.exception.TypeNotSelectedException;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
-    void addCategory(CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory;
+    void addCategory(CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory, TypeNotSelectedException;
     List<CategoryResponse> getCategories(int userId);
 
     CategoryResponse getTaxCategory();

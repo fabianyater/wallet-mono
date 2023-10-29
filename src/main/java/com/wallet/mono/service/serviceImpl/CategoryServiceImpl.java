@@ -9,6 +9,7 @@ import com.wallet.mono.domain.model.Category;
 import com.wallet.mono.exception.CategoryAlreadyDoesNotExists;
 import com.wallet.mono.exception.CategoryAlreadyExists;
 import com.wallet.mono.exception.DefatulCategory;
+import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.repository.CategoryRepository;
 import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.utils.DefaultCategories;
@@ -45,7 +46,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void addCategory(CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory {
+    public void addCategory(CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory, TypeNotSelectedException {
+        if (categoryRequest.getType() == null) {
+            throw new TypeNotSelectedException();
+        }
+
         if (DEFAULT_CATEGORIES_MAP.containsKey(categoryRequest.getCategoryName())) {
             throw new DefatulCategory();
         }
@@ -81,8 +86,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Optional<CategoryResponse> getCategory(int categoryId, int userId) throws CategoryAlreadyDoesNotExists {
         return Optional.ofNullable(Optional.ofNullable(categoryResponseMapper
-                .mapToCategoryResponse(categoryRepository
-                        .findByCategoryIdAndUser_UserId(categoryId, userId)))
+                        .mapToCategoryResponse(categoryRepository
+                                .findByCategoryIdAndUser_UserId(categoryId, userId)))
                 .orElseThrow(CategoryAlreadyDoesNotExists::new));
     }
 
