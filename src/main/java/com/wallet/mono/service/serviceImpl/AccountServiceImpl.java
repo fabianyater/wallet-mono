@@ -7,14 +7,17 @@ import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.domain.mapper.AccountRequestMapper;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;
+import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.UnableToDeleteFavoriteAccount;
 import com.wallet.mono.exception.UserNotFoundException;
 import com.wallet.mono.repository.AccountRepository;
+import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountRequestMapper accountRequestMapper;
     private final AccountResponseMapper accountResponseMapper;
+    private final TransactionRepository transactionRepository;
 
     @Override
     public void saveAccount(AccountRequest accountRequest) throws Exception {
@@ -45,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
 
         Account account = accountRequestMapper.mapToAccount(accountRequest);
 
-        if  (accounts.isEmpty()) {
+        if (accounts.isEmpty()) {
             account.setFavorite(true);
         }
 
@@ -148,6 +152,13 @@ public class AccountServiceImpl implements AccountService {
 
         if (accountResponse.isFavorite()) {
             throw new UnableToDeleteFavoriteAccount();
+        }
+
+        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(favoriteRequest.getAccountId(), Pageable.unpaged()).getContent();
+
+        if (!transactions.isEmpty()) {
+            List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
+            transactionRepository.deleteAllById(transactionIds);
         }
 
         accountRepository.deleteById(favoriteRequest.getAccountId());
