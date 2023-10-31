@@ -109,12 +109,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(CategoryDeleteRequest categoryDeleteRequest) throws CategoryAlreadyDoesNotExists {
+    public void deleteCategory(CategoryDeleteRequest categoryDeleteRequest) throws CategoryAlreadyDoesNotExists, DefatulCategory {
+
         int categoryId = categoryDeleteRequest.getCategoryId();
         int userId = categoryDeleteRequest.getUserId();
 
-        getCategory(categoryId, userId);
+        Optional<CategoryResponse> categoryResponse = getCategory(categoryId, userId);
 
-        categoryRepository.deleteById(categoryId);
+        if (categoryResponse.isPresent()) {
+            if (DEFAULT_CATEGORIES_MAP.containsKey(categoryResponse.get().getCategoryName())) {
+                throw new DefatulCategory();
+            }
+
+            categoryRepository.deleteById(categoryId);
+        }
+
     }
 }

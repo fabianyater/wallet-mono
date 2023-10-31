@@ -19,5 +19,5 @@ public interface CategoryService {
     CategoryResponse getTaxCategory();
     Optional<CategoryResponse> getCategory(int categoryId, int userId) throws CategoryAlreadyDoesNotExists;
     void updateCategory(int categoryId, CategoryRequest categoryRequest) throws Exception;
-    void deleteCategory(CategoryDeleteRequest categoryDeleteRequest) throws CategoryAlreadyDoesNotExists;
+    void deleteCategory(CategoryDeleteRequest categoryDeleteRequest) throws CategoryAlreadyDoesNotExists, DefatulCategory;
 }
