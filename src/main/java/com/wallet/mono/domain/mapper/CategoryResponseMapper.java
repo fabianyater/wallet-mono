@@ -13,9 +13,11 @@ import java.util.List;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CategoryResponseMapper {
     @Mapping(target = "userId", source = "user.userId")
+    @Mapping(target = "defaultCategory", source = "isDefault")
     CategoryResponse mapToCategoryResponse(Category category);
 
     @Mapping(target = "user.userId", source = "userId")
+    @Mapping(target = "isDefault", source = "defaultCategory")
     Category mapToCategory(CategoryResponse categoryResponse);
 
     List<CategoryResponse> mapToCategoryResponseList(List<Category> categories);

@@ -31,4 +31,7 @@ public class Category {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "is_default")
+    private Boolean isDefault;
+
 }
