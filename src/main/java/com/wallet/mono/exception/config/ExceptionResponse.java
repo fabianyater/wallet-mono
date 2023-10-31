@@ -13,7 +13,8 @@ public enum ExceptionResponse {
     INSUFFICIENT_BALANCE("Saldo insuficiente"),
     TRANSACTION_DOES_NOT_EXISTS("Este movimiento no existe"),
     OPERATION_NOT_ALLOWED("Operación no permitida"),
-    UNABLE_TO_DELETE_TRANSACTIONS("No es posible eliminar las transacciones");
+    UNABLE_TO_DELETE_TRANSACTIONS("No es posible eliminar las transacciones"),
+    UNABLE_TO_DELETE_FAVORITE_ACCOUNT("No es posible eliminar una cuenta favorita");
 
     private final String message;
 

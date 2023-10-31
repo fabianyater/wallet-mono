@@ -9,6 +9,7 @@ import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;
 import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
+import com.wallet.mono.exception.UnableToDeleteFavoriteAccount;
 import com.wallet.mono.exception.UserNotFoundException;
 import com.wallet.mono.repository.AccountRepository;
 import com.wallet.mono.service.AccountService;
@@ -143,7 +144,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void deleteAccount(FavoriteRequest favoriteRequest) throws Exception {
-        getAccountDetails(favoriteRequest.getAccountId(), favoriteRequest.getUserId());
+        AccountResponse accountResponse = getAccountDetails(favoriteRequest.getAccountId(), favoriteRequest.getUserId());
+
+        if (accountResponse.isFavorite()) {
+            throw new UnableToDeleteFavoriteAccount();
+        }
+
         accountRepository.deleteById(favoriteRequest.getAccountId());
     }
 

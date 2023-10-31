@@ -61,6 +61,17 @@ public class GlobalExceptionHandler {
                 .body(apiResponse);
     }
 
+    @ExceptionHandler(UnableToDeleteFavoriteAccount.class)
+    public ResponseEntity<ApiResponse<Object>> handleUnableToDeleteFavoriteAccount(
+            UnableToDeleteFavoriteAccount unableToDeleteFavoriteAccount) {
+        ApiResponse<Object> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage(ExceptionResponse.UNABLE_TO_DELETE_FAVORITE_ACCOUNT.getMessage());
+        apiResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(apiResponse);
+    }
+
     @ExceptionHandler(DefatulCategory.class)
     public ResponseEntity<ApiResponse<Object>> handleDefatulCategory(
             DefatulCategory defatulCategory) {
