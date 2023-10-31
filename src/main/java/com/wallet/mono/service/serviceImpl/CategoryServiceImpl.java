@@ -101,6 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         oldCategory.get().setCategoryName(categoryRequest.getCategoryName());
         oldCategory.get().setType(categoryRequest.getType());
+        oldCategory.get().setUserId(categoryRequest.getUserId());
 
         Category newCategory = categoryResponseMapper.mapToCategory(oldCategory.get());
 
