@@ -77,7 +77,7 @@ public class CategoryController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    @PutMapping
+    @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> deleteCategory(
             @RequestBody CategoryDeleteRequest categoryRequest)
             throws Exception {
