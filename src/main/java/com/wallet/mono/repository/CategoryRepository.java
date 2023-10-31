@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Category findByCategoryIdAndUser_UserId(Integer categoryId, Integer userId);
-    @Query("select c from Category c where c.user.userId is null")
+    @Query("select c from Category c where c.isDefault is true")
     List<Category> findDefaultCategories();
     List<Category> findByUser_UserId(Integer userId);
     @Query("select c from Category c where c.categoryName = ?1")

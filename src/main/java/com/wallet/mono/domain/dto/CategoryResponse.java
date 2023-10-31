@@ -9,5 +9,6 @@ public class CategoryResponse {
     private int categoryId;
     private String categoryName;
     private String type;
+    private boolean defaultCategory;
     private int userId;
 }
