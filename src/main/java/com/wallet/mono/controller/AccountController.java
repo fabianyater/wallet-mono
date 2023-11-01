@@ -5,6 +5,7 @@ import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
 import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.service.AccountService;
+import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,17 @@ import java.util.List;
 public class AccountController {
     private final AccountService accountService;
 
-    @PostMapping()
-    public ResponseEntity<Void> saveUser(@RequestBody AccountRequest accountRequest) throws Exception {
+    @PostMapping
+    public ResponseEntity<ApiResponse<Void>> saveUser(@RequestBody AccountRequest accountRequest) throws Exception {
         accountService.saveAccount(accountRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage("Cuenta creada correctamente");
+        apiResponse.setStatus(HttpStatus.CREATED.value());
+        apiResponse.setData(null);
+        apiResponse.setPagination(null);
+        apiResponse.setAdditionalInfo(null);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @GetMapping("user/{userId}")
