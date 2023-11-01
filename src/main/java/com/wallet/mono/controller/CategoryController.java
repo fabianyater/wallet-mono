@@ -1,5 +1,6 @@
 package com.wallet.mono.controller;
 
+import com.wallet.mono.domain.dto.AdditionalInfoResponse;
 import com.wallet.mono.domain.dto.CategoryDeleteRequest;
 import com.wallet.mono.domain.dto.CategoryRequest;
 import com.wallet.mono.domain.dto.CategoryResponse;
@@ -37,9 +38,9 @@ public class CategoryController {
     }
 
     @GetMapping("user/{userId}")
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getCategories(@PathVariable("userId") int userId) {
-        List<CategoryResponse> categoryResponses = categoryService.getCategories(userId);
-        ApiResponse<List<CategoryResponse>> apiResponse = new ApiResponse<>();
+    public ResponseEntity<ApiResponse<AdditionalInfoResponse>> getCategories(@PathVariable("userId") int userId) {
+        AdditionalInfoResponse categoryResponses = categoryService.getCategories(userId);
+        ApiResponse<AdditionalInfoResponse> apiResponse = new ApiResponse<>();
 
         apiResponse.setMessage("Categorías obtenidas correctamente");
         apiResponse.setStatus(HttpStatus.OK.value());
