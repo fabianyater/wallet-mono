@@ -66,6 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         Category category = categoryRequestMapper.mapToCategory(categoryRequest);
+        category.setIsDefault(false);
         categoryRepository.save(category);
     }
 
