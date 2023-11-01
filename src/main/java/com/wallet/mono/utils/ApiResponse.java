@@ -15,6 +15,7 @@ public class ApiResponse<T> implements Serializable {
     private String message;
     private T data;
     private Pagination pagination;
+    private AdditionalInfo additionalInfo;
 
     @Getter
     @Setter

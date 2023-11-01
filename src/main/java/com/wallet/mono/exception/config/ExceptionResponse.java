@@ -6,11 +6,15 @@ public enum ExceptionResponse {
     USER_NOT_FOUND("Usuario no encontrado"),
     ACCOUNT_NOT_FOUND("Cuenta no encontrada"),
     CATEGORY_NOT_SELECTED("Categoría no seleccionada"),
+    CATEGORY_ALREADY_EXISTS("Nombre de categoría ya existe"),
+    CATEGORY_DOES_NOT_EXIXTS("Esta categoría por defecto no se puede modificar"),
+    DEFAULT_CATEGORY("Esta categoría por defecto no se puede modificar"),
     TYPE_NOT_SELECTED("Tipo de movimiento no seleccionado"),
     INSUFFICIENT_BALANCE("Saldo insuficiente"),
     TRANSACTION_DOES_NOT_EXISTS("Este movimiento no existe"),
     OPERATION_NOT_ALLOWED("Operación no permitida"),
-    UNABLE_TO_DELETE_TRANSACTIONS("No es posible eliminar las transacciones");
+    UNABLE_TO_DELETE_TRANSACTIONS("No es posible eliminar las transacciones"),
+    UNABLE_TO_DELETE_FAVORITE_ACCOUNT("No es posible eliminar una cuenta favorita");
 
     private final String message;
 
