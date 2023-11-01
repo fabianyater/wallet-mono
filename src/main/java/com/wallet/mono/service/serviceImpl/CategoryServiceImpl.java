@@ -72,7 +72,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public AdditionalInfoResponse getCategories(int userId) {
-        loadCategories();
         List<Category> defaultCategories = categoryRepository.findDefaultCategories();
         List<Category> categories = categoryRepository.findByUser_UserId(userId);
         List<Category> response = new ArrayList<>(defaultCategories);
