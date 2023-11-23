@@ -34,19 +34,6 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryResponseMapper categoryResponseMapper;
     private final CategoryRequestMapper categoryRequestMapper;
 
-    private void loadCategories() {
-        List<Category> categoriesToSave = new ArrayList<>();
-        for (Map.Entry<String, DefaultCategories.CategoryType> entry : DEFAULT_CATEGORIES_MAP.entrySet()) {
-            Category category = new Category();
-            category.setCategoryName(entry.getKey());
-            category.setType(entry.getValue().toString());
-
-            categoriesToSave.add(category);
-        }
-
-        categoryRepository.saveAll(categoriesToSave);
-    }
-
     @Override
     public void addCategory(CategoryRequest categoryRequest) throws CategoryAlreadyExists, DefatulCategory, TypeNotSelectedException {
         if (categoryRequest.getType() == null) {
