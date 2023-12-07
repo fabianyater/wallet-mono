@@ -110,9 +110,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TotalAmountResponse getTotalIncomeByAccountId(int accountId) {
+    public TotalAmountResponse getTotalIncomeByAccountId(int accountId, Integer year, Integer month) {
         TotalAmountResponse totalAmountResponse = new TotalAmountResponse();
-        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByAccountId(accountId);
+        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByAccountId(accountId, year, month);
+
+        if (totalAmount.isEmpty()) {
+            return totalAmountResponse;
+        }
 
         totalAmountResponse.setExpense(totalAmount.get(0));
         totalAmountResponse.setIncome(totalAmount.get(1));

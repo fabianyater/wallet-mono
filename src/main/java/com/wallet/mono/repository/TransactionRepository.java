@@ -33,8 +33,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             "inner join accounts a \n" +
             "on t.account_id = a.id \n" +
             "where a.id = :accountId\n" +
+            "and extract(YEAR from t.transaction_date) = :year \n " +
+            "and extract(MONTH from t.transaction_date) = :month \n " +
             "group by t.transaction_type", nativeQuery = true)
-    List<Double> getTotalTransactionAmountByAccountId(@Param("accountId") Integer accountId);
+    List<Double> getTotalTransactionAmountByAccountId(@Param("accountId") Integer accountId, @Param("year") Integer year, @Param("month") Integer month);
 
     @Query(value = "WITH days AS (" +
             "    SELECT date_trunc('day', serie) as date " +
