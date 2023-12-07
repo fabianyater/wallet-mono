@@ -1,9 +1,6 @@
 package com.wallet.mono.service.serviceImpl;
 
-import com.wallet.mono.domain.dto.AdditionalInfoResponse;
-import com.wallet.mono.domain.dto.CategoryDeleteRequest;
-import com.wallet.mono.domain.dto.CategoryRequest;
-import com.wallet.mono.domain.dto.CategoryResponse;
+import com.wallet.mono.domain.dto.*;
 import com.wallet.mono.domain.mapper.CategoryRequestMapper;
 import com.wallet.mono.domain.mapper.CategoryResponseMapper;
 import com.wallet.mono.domain.model.Category;
@@ -14,15 +11,11 @@ import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.repository.CategoryRepository;
 import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.utils.AdditionalInfo;
-import com.wallet.mono.utils.DefaultCategories;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.wallet.mono.utils.DefaultCategories.DEFAULT_CATEGORIES_MAP;
 
@@ -143,5 +136,25 @@ public class CategoryServiceImpl implements CategoryService {
             categoryRepository.deleteById(categoryId);
         }
 
+    }
+
+    @Override
+    public CategoryStatistics getCategorySummary(int accountId, String transactionType, Date startDate, Date endDate) {
+        List<Object[]> list = categoryRepository.findWeeklyCategorySummary(accountId, transactionType, startDate, endDate);
+        Double total = 0.0;
+
+        for (Object[] objects : list) {
+            if (objects[1] != null) {
+                total += (Double) objects[1];
+            }
+        }
+
+        List<CategorySummary> categorySummary = categoryResponseMapper.mapToCategorySummaryList(list);
+
+        CategoryStatistics categoryStatistics = new CategoryStatistics();
+        categoryStatistics.setCategorySummary(categorySummary);
+        categoryStatistics.setTotal(total);
+
+        return categoryStatistics;
     }
 }

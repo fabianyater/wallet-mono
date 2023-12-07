@@ -1,9 +1,6 @@
 package com.wallet.mono.controller;
 
-import com.wallet.mono.domain.dto.AdditionalInfoResponse;
-import com.wallet.mono.domain.dto.CategoryDeleteRequest;
-import com.wallet.mono.domain.dto.CategoryRequest;
-import com.wallet.mono.domain.dto.CategoryResponse;
+import com.wallet.mono.domain.dto.*;
 import com.wallet.mono.exception.CategoryAlreadyDoesNotExists;
 import com.wallet.mono.exception.CategoryAlreadyExists;
 import com.wallet.mono.exception.DefatulCategory;
@@ -11,12 +8,14 @@ import com.wallet.mono.exception.TypeNotSelectedException;
 import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import javax.websocket.server.PathParam;
+import java.util.Date;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -91,4 +90,20 @@ public class CategoryController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
+    @GetMapping("summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<CategoryStatistics>> getStats(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("type") String type,
+            @PathParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @PathParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
+        CategoryStatistics categoryStatistics = categoryService.getCategorySummary(accountId, type, startDate, endDate);
+        ApiResponse<CategoryStatistics> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(categoryStatistics);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

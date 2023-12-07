@@ -34,4 +34,7 @@ public class Category {
     @Column(name = "is_default")
     private Boolean isDefault;
 
+    @Column
+    private String color;
+
 }

@@ -1,10 +1,8 @@
 package com.wallet.mono.service;
 
-import com.wallet.mono.domain.dto.ListTransactionResponse;
-import com.wallet.mono.domain.dto.TotalAmountResponse;
-import com.wallet.mono.domain.dto.TransactionRequest;
-import com.wallet.mono.domain.dto.TransactionResponse;
+import com.wallet.mono.domain.dto.*;
 
+import java.util.Date;
 import java.util.List;
 
 public interface TransactionService {
@@ -14,4 +12,5 @@ public interface TransactionService {
     TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception;
     TotalAmountResponse getTotalIncomeByAccountId(int accountId);
     Boolean deleteAllTransactions(int accountId);
+    List<TransactionStatistics> getTransactionStatistics(int accountId, Date startDate, Date endDate) throws Exception;
 }

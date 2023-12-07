@@ -6,7 +6,7 @@ import com.wallet.mono.exception.CategoryAlreadyExists;
 import com.wallet.mono.exception.DefatulCategory;
 import com.wallet.mono.exception.TypeNotSelectedException;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Optional;
 
 public interface CategoryService {
@@ -17,4 +17,6 @@ public interface CategoryService {
     Optional<CategoryResponse> getCategory(int categoryId, int userId) throws CategoryAlreadyDoesNotExists;
     void updateCategory(int categoryId, CategoryRequest categoryRequest) throws Exception;
     void deleteCategory(CategoryDeleteRequest categoryDeleteRequest) throws CategoryAlreadyDoesNotExists, DefatulCategory;
+    CategoryStatistics getCategorySummary(int accountId, String transactionType, Date startDate, Date endDate);
+
 }

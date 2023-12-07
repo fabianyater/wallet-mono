@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -130,6 +131,13 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         return false;
+    }
+
+    @Override
+    public List<TransactionStatistics> getTransactionStatistics(int accountId, Date startDate, Date endDate) {
+        List<Object[]> transactionStatistics = transactionRepository.findWeeklyTransactionSummary(accountId, startDate, endDate);
+
+        return transactionResponseMapper.mapToTransactionStatistics(transactionStatistics);
     }
 
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {
