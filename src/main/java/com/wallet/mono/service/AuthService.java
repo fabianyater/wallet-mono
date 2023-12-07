@@ -5,5 +5,5 @@ import com.wallet.mono.domain.dto.UserResponse;
 import com.wallet.mono.exception.UserNotFoundException;
 
 public interface AuthService {
-    UserResponse login(UserRequest userRequest) throws UserNotFoundException;
+    UserResponse login(UserRequest userRequest) throws Exception;
 }

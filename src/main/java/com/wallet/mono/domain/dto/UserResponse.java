@@ -10,4 +10,5 @@ public class UserResponse {
     private String userName;
     private String fullName;
     private String jwt;
+    private int accountId;
 }

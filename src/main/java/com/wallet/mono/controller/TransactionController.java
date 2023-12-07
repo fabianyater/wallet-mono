@@ -69,8 +69,10 @@ public class TransactionController {
 
     @GetMapping("total/account/{accountId}")
     public ResponseEntity<TotalAmountResponse> getTotalTransactionsAmount(
-            @PathVariable("accountId") Integer accountId) throws Exception {
-        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId), HttpStatus.OK);
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("year") Integer year,
+            @PathParam("month") Integer month) throws Exception {
+        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId, year, month), HttpStatus.OK);
     }
 
     @GetMapping("stats/account/{accountId}")
