@@ -40,7 +40,10 @@ public class AuthServiceImpl implements AuthService {
         userResponse.setJwt(jwtUtils.generateToken(userRequest.getUserName()));
         userResponse.setUserId(userService.getUserDetails(userRequest.getUserName()).getUserId());
         List<AccountResponse> accounts = accountService.getAccountsByUserId(userResponse.getUserId());
-        userResponse.setAccountId(Integer.parseInt(accounts.stream().findFirst().get().getAccountId()));
+
+        if (!accounts.isEmpty()) {
+            userResponse.setAccountId((accounts.stream().findFirst().get().getAccountId()));
+        }
 
         return userResponse;
     }
