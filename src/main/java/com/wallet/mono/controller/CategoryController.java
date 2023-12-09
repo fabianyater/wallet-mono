@@ -106,4 +106,37 @@ public class CategoryController {
         apiResponse.setPagination(null);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
+    @GetMapping("monthly/summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<CategoryStatistics>> getMonthlySummary(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("type") String type,
+            @PathParam("year") int year,
+            @PathParam("month") int month) throws Exception {
+        CategoryStatistics categoryStatistics = categoryService.getMonthlyCategorySummary(accountId, type, year, month);
+        ApiResponse<CategoryStatistics> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(categoryStatistics);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("annual/summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<CategoryStatistics>> getAnnualSummary(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("type") String type,
+            @PathParam("year") int year) throws Exception {
+        CategoryStatistics categoryStatistics = categoryService.getAnnualCategorySummary(accountId, type, year);
+        ApiResponse<CategoryStatistics> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(categoryStatistics);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

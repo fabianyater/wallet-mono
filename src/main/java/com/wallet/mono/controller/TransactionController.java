@@ -76,12 +76,12 @@ public class TransactionController {
     }
 
     @GetMapping("stats/account/{accountId}")
-    public ResponseEntity<ApiResponse<List<TransactionStatistics>>> getStats(
+    public ResponseEntity<ApiResponse<List<TransactionsSummaryResponse>>> getStats(
             @PathVariable("accountId") Integer accountId,
             @PathParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
             @PathParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
-        List<TransactionStatistics> transactionStadistics = transactionService.getTransactionStatistics(accountId, startDate, endDate);
-        ApiResponse<List<TransactionStatistics>> apiResponse = new ApiResponse<>();
+        List<TransactionsSummaryResponse> transactionStadistics = transactionService.getTransactionStatistics(accountId, startDate, endDate);
+        ApiResponse<List<TransactionsSummaryResponse>> apiResponse = new ApiResponse<>();
 
         apiResponse.setData(transactionStadistics);
         apiResponse.setStatus(HttpStatus.OK.value());
@@ -91,6 +91,36 @@ public class TransactionController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @GetMapping("monthly/summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<List<TransactionsSummaryResponse>>> getStats(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("year") int year,
+            @PathParam("month") int month) throws Exception {
+        List<TransactionsSummaryResponse> monthlyTransactionsSummary = transactionService.getDailyTransactionsSummary(accountId, year, month);
+        ApiResponse<List<TransactionsSummaryResponse>> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(monthlyTransactionsSummary);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("annual/summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<List<TransactionsSummaryResponse>>> getStats(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("year") int year) throws Exception {
+        List<TransactionsSummaryResponse> monthlyTransactionsSummary = transactionService.getMonthlyTransactionsSummaryPerYear(accountId, year);
+        ApiResponse<List<TransactionsSummaryResponse>> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(monthlyTransactionsSummary);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 
     @DeleteMapping
     public ResponseEntity<ApiResponse<Boolean>> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
