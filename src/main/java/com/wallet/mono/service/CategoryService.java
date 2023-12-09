@@ -18,5 +18,8 @@ public interface CategoryService {
     void updateCategory(int categoryId, CategoryRequest categoryRequest) throws Exception;
     void deleteCategory(CategoryDeleteRequest categoryDeleteRequest) throws CategoryAlreadyDoesNotExists, DefatulCategory;
     CategoryStatistics getCategorySummary(int accountId, String transactionType, Date startDate, Date endDate);
+    CategoryStatistics getMonthlyCategorySummary(int accountId, String transactionType, int year, int month);
+    CategoryStatistics getAnnualCategorySummary(int accountId, String transactionType, int year);
+
 
 }

@@ -2,6 +2,7 @@ package com.wallet.mono.domain.mapper;
 
 import com.wallet.mono.domain.dto.TransactionResponse;
 import com.wallet.mono.domain.dto.TransactionStatistics;
+import com.wallet.mono.domain.dto.TransactionsSummaryResponse;
 import com.wallet.mono.domain.model.Transaction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,21 +31,20 @@ public interface TransactionResponseMapper {
 
     List<TransactionResponse> mapToTransactionResponseList(Page<Transaction> transactions);
 
-
-    default TransactionStatistics map(Object[] object) {
-        TransactionStatistics statistics = new TransactionStatistics();
-        statistics.setDay((String) object[0]);
-        statistics.setIncome(((Number) object[1]).longValue());
-        statistics.setExpense(((Number) object[2]).longValue());
-        return statistics;
+    default TransactionsSummaryResponse mapToTransactionSummaryResponse(Object[] object) {
+        TransactionsSummaryResponse transactionsSummaryResponse = new TransactionsSummaryResponse();
+        transactionsSummaryResponse.setDateName((String) object[0]);
+        transactionsSummaryResponse.setIncome(((Number) object[1]).longValue());
+        transactionsSummaryResponse.setExpense(((Number) object[2]).longValue());
+        return transactionsSummaryResponse;
     }
 
-    default List<TransactionStatistics> mapToTransactionStatistics(List<Object[]> objects) {
+    default List<TransactionsSummaryResponse> mapToTransactionSummaryResponseList(List<Object[]> objects) {
         if (objects == null) {
             return Collections.emptyList();
         }
         return objects.stream()
-                .map(this::map)
+                .map(this::mapToTransactionSummaryResponse)
                 .collect(Collectors.toList());
     }
 }

@@ -157,4 +157,44 @@ public class CategoryServiceImpl implements CategoryService {
 
         return categoryStatistics;
     }
+
+    @Override
+    public CategoryStatistics getMonthlyCategorySummary(int accountId, String transactionType, int year, int month) {
+        List<Object[]> list = categoryRepository.findMonthlySummaryByTypeYearAndMonth(accountId, transactionType, year, month);
+        Double total = 0.0;
+
+        for (Object[] objects : list) {
+            if (objects[1] != null) {
+                total += (Double) objects[1];
+            }
+        }
+
+        List<CategorySummary> categorySummary = categoryResponseMapper.mapToCategorySummaryList(list);
+
+        CategoryStatistics categoryStatistics = new CategoryStatistics();
+        categoryStatistics.setCategorySummary(categorySummary);
+        categoryStatistics.setTotal(total);
+
+        return categoryStatistics;
+    }
+
+    @Override
+    public CategoryStatistics getAnnualCategorySummary(int accountId, String transactionType, int year) {
+        List<Object[]> list = categoryRepository.findAnnualSummaryByTypeAndYear(accountId, transactionType, year);
+        Double total = 0.0;
+
+        for (Object[] objects : list) {
+            if (objects[1] != null) {
+                total += (Double) objects[1];
+            }
+        }
+
+        List<CategorySummary> categorySummary = categoryResponseMapper.mapToCategorySummaryList(list);
+
+        CategoryStatistics categoryStatistics = new CategoryStatistics();
+        categoryStatistics.setCategorySummary(categorySummary);
+        categoryStatistics.setTotal(total);
+
+        return categoryStatistics;
+    }
 }

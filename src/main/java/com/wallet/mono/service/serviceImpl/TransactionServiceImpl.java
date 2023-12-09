@@ -138,10 +138,24 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionStatistics> getTransactionStatistics(int accountId, Date startDate, Date endDate) {
+    public List<TransactionsSummaryResponse> getTransactionStatistics(int accountId, Date startDate, Date endDate) {
         List<Object[]> transactionStatistics = transactionRepository.findWeeklyTransactionSummary(accountId, startDate, endDate);
 
-        return transactionResponseMapper.mapToTransactionStatistics(transactionStatistics);
+        return transactionResponseMapper.mapToTransactionSummaryResponseList(transactionStatistics);
+    }
+
+    @Override
+    public List<TransactionsSummaryResponse> getDailyTransactionsSummary(int accountId, int year, int month) {
+        List<Object[]> monthlyTransactionsObject = transactionRepository.findDailyTransactionsSummary(accountId, year, month);
+
+        return transactionResponseMapper.mapToTransactionSummaryResponseList(monthlyTransactionsObject);
+    }
+
+    @Override
+    public List<TransactionsSummaryResponse> getMonthlyTransactionsSummaryPerYear(int accountId, int year) {
+        List<Object[]> monthlyTransactionsObject = transactionRepository.findMonthlyTransactionsSummaryForYear(accountId, year);
+
+        return transactionResponseMapper.mapToTransactionSummaryResponseList(monthlyTransactionsObject);
     }
 
     private void setAccountBalance(Account account, Transaction transaction) throws Exception {

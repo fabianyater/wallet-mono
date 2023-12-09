@@ -28,4 +28,25 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
             "LIMIT 10", nativeQuery = true)
     List<Object[]> findWeeklyCategorySummary(@Param("accountId") int accountId, @Param("type") String type, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
+    @Query(value = "SELECT c.category_name, SUM(t.transaction_amount) AS total_amount, c.color " +
+            "FROM categories c " +
+            "INNER JOIN transactions t ON c.id = t.category_id " +
+            "WHERE t.transaction_type = :type " +
+            "AND t.account_id = :accountId " +
+            "AND EXTRACT(YEAR FROM t.transaction_date) = :year " +
+            "AND EXTRACT(MONTH FROM t.transaction_date) = :month " +
+            "GROUP BY c.category_name, c.color " +
+            "ORDER BY total_amount DESC", nativeQuery = true)
+    List<Object[]> findMonthlySummaryByTypeYearAndMonth(@Param("accountId") int accountId, @Param("type") String type, @Param("year") int year, @Param("month") int month);
+
+    @Query(value = "SELECT c.category_name, SUM(t.transaction_amount) AS total_amount, c.color " +
+            "FROM categories c " +
+            "INNER JOIN transactions t ON c.id = t.category_id " +
+            "WHERE t.transaction_type = :type " +
+            "AND t.account_id = :accountId " +
+            "AND EXTRACT(YEAR FROM t.transaction_date) = :year " +
+            "GROUP BY c.category_name, c.color " +
+            "ORDER BY total_amount DESC", nativeQuery = true)
+    List<Object[]> findAnnualSummaryByTypeAndYear(@Param("accountId") int accountId, @Param("type") String type, @Param("year") int year);
+
 }
