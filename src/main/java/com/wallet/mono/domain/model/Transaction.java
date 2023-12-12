@@ -43,8 +43,8 @@ public class Transaction {
     private LocalTime transactionTime;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @JoinColumn(name = "wallet_id")
+    private Wallet wallet;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
