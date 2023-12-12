@@ -13,8 +13,6 @@ public interface AccountService {
     AccountResponse getAccountId(int accountId) throws Exception;
     AccountResponse getAccountDetails(int accountId, int userId) throws Exception;
     AccountBalanceResponse getAccountBalance(int accountId) throws Exception;
-    void updateAccountBalance(Double newBalance, int accountId) throws Exception;
     void updateAccount(int accountId, AccountRequest accountRequest) throws Exception;
-    void updateDefaultAccount(FavoriteRequest favoriteRequest) throws Exception;
     void deleteAccount(FavoriteRequest favoriteRequest) throws Exception;
 }
