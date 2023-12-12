@@ -34,13 +34,13 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("account/{accountId}")
+    @GetMapping("wallet/{walletId}")
     public ResponseEntity<ApiResponse<ListTransactionResponse>> getTransactions(
-            @PathVariable("accountId") Integer accountId,
+            @PathVariable("walletId") Integer walletId,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
         try {
-            ListTransactionResponse transactionResponses = transactionService.getTransactionsByAccountId(accountId, page - 1, size);
+            ListTransactionResponse transactionResponses = transactionService.getTransactionsByWalletId(walletId, page - 1, size);
             ApiResponse<ListTransactionResponse> apiResponse = new ApiResponse<>();
 
             ApiResponse.Pagination pagination = new ApiResponse.Pagination();
@@ -60,19 +60,19 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("{txnId}/account/{accountId}")
+    @GetMapping("{txnId}/wallet/{walletId}")
     public ResponseEntity<TransactionResponse> getTransactionDetails(
             @PathVariable("txnId") Integer txnId,
-            @PathVariable("accountId") Integer accountId) throws Exception {
-        return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, accountId), HttpStatus.OK);
+            @PathVariable("walletId") Integer walletId) throws Exception {
+        return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, walletId), HttpStatus.OK);
     }
 
-    @GetMapping("total/account/{accountId}")
+    @GetMapping("total/wallet/{walletId}")
     public ResponseEntity<TotalAmountResponse> getTotalTransactionsAmount(
-            @PathVariable("accountId") Integer accountId,
+            @PathVariable("walletId") Integer walletId,
             @PathParam("year") Integer year,
             @PathParam("month") Integer month) throws Exception {
-        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId, year, month), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.getTotalIncomeByWalletId(walletId, year, month), HttpStatus.OK);
     }
 
     @GetMapping("stats/account/{accountId}")
