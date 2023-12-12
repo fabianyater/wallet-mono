@@ -15,6 +15,6 @@ public interface TransactionRequestMapper {
     @Mapping(target = "transactionDescription", source = "description")
     @Mapping(target = "transactionType", source = "type")
     @Mapping(target = "category.categoryId", source = "categoryId")
-    @Mapping(target = "account.accountId", source = "accountId")
+    @Mapping(target = "wallet.walletId", source = "walletId")
     Transaction mapToTransaction(TransactionRequest transactionRequest);
 }

@@ -10,6 +10,5 @@ public class AccountResponse {
     private String accountName;
     private String accountCurrency;
     private Double accountBalance;
-    private boolean isFavorite;
     private int userId;
 }

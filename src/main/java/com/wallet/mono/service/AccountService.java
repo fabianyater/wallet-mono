@@ -3,7 +3,7 @@ package com.wallet.mono.service;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
-import com.wallet.mono.domain.dto.FavoriteRequest;
+import com.wallet.mono.exception.AccountNotFoundException;
 
 import java.util.List;
 
@@ -13,8 +13,6 @@ public interface AccountService {
     AccountResponse getAccountId(int accountId) throws Exception;
     AccountResponse getAccountDetails(int accountId, int userId) throws Exception;
     AccountBalanceResponse getAccountBalance(int accountId) throws Exception;
-    void updateAccountBalance(Double newBalance, int accountId) throws Exception;
     void updateAccount(int accountId, AccountRequest accountRequest) throws Exception;
-    void updateDefaultAccount(FavoriteRequest favoriteRequest) throws Exception;
-    void deleteAccount(FavoriteRequest favoriteRequest) throws Exception;
+    boolean doesAccountExist(int accountId) throws AccountNotFoundException;
 }
