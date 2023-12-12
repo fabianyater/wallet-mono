@@ -3,7 +3,6 @@ package com.wallet.mono.controller;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
-import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;
@@ -55,13 +54,6 @@ public class AccountController {
             @PathVariable("accountId") Integer accountId,
             @RequestBody AccountRequest accountRequest) throws Exception {
         accountService.updateAccount(accountId, accountRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-    @DeleteMapping
-    public ResponseEntity<Void> deleteAccount(@RequestBody FavoriteRequest favoriteRequest) throws Exception {
-        accountService.deleteAccount(favoriteRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

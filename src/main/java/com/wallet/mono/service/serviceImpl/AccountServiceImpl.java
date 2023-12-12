@@ -3,11 +3,9 @@ package com.wallet.mono.service.serviceImpl;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
-import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.domain.mapper.AccountRequestMapper;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;
-import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
 import com.wallet.mono.exception.UserNotFoundException;
@@ -16,7 +14,6 @@ import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -116,15 +113,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void deleteAccount(FavoriteRequest favoriteRequest) throws Exception {
-        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(favoriteRequest.getAccountId(), Pageable.unpaged()).getContent();
-
-        if (!transactions.isEmpty()) {
-            List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
-            transactionRepository.deleteAllById(transactionIds);
+    public boolean doesAccountExist(int accountId) throws AccountNotFoundException {
+        if (accountRepository.existsByAccountId(accountId)) {
+            return true;
+        } else {
+            throw new AccountNotFoundException();
         }
-
-        accountRepository.deleteById(favoriteRequest.getAccountId());
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {
