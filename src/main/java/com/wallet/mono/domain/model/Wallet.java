@@ -26,6 +26,8 @@ public class Wallet {
 
     private Double balance;
 
+    private Boolean isLimited;
+
     private Double limitValue;
 
     @Column(nullable = false)
