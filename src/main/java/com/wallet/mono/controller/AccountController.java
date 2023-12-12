@@ -58,13 +58,6 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("favorite")
-    public ResponseEntity<Void> updateDefaultAccount(
-            @RequestBody FavoriteRequest favoriteRequest) throws Exception {
-        accountService.updateDefaultAccount(favoriteRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
 
     @DeleteMapping
     public ResponseEntity<Void> deleteAccount(@RequestBody FavoriteRequest favoriteRequest) throws Exception {
