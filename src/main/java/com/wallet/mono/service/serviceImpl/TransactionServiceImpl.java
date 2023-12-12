@@ -2,18 +2,15 @@ package com.wallet.mono.service.serviceImpl;
 
 import com.wallet.mono.domain.dto.*;
 import com.wallet.mono.domain.mapper.*;
-import com.wallet.mono.domain.model.Account;
 import com.wallet.mono.domain.model.Transaction;
+import com.wallet.mono.domain.model.Wallet;
 import com.wallet.mono.enums.TransactionType;
-import com.wallet.mono.exception.CategoryNotSelectedException;
-import com.wallet.mono.exception.CustomArithmeticException;
-import com.wallet.mono.exception.InsufficientBalanceException;
-import com.wallet.mono.exception.TransactionDoesNotExists;
-import com.wallet.mono.exception.TypeNotSelectedException;
+import com.wallet.mono.exception.*;
 import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.CategoryService;
 import com.wallet.mono.service.TransactionService;
+import com.wallet.mono.service.WalletService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +32,8 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRequestMapper transactionRequestMapper;
     private final TransactionResponseMapper transactionResponseMapper;
     private final AccountService accountService;
+    private final WalletService walletService;
+    private final WalletResponseMapper walletResponseMapper;
     private final AccountResponseMapper accountResponseMapper;
     private final CategoryService categoryService;
     private final CategoryResponseMapper categoryResponseMapper;
@@ -49,9 +48,11 @@ public class TransactionServiceImpl implements TransactionService {
             throw new TypeNotSelectedException();
         }
 
-        AccountResponse accountResponse = accountService.getAccountId(transactionRequest.getAccountId());
-        Account account = accountResponseMapper.mapToAccount(accountResponse);
+        WalletResponse walletResponse = walletService.getWalletDetails(transactionRequest.getWalletId());
+        Wallet wallet = walletResponseMapper.toEntity(walletResponse);
         Transaction transaction = transactionRequestMapper.mapToTransaction(transactionRequest);
+
+        setAccountBalance(wallet, transaction);
 
         transaction.setTransactionDate(LocalDate.now());
         transaction.setTransactionTime(LocalTime.now());
@@ -60,32 +61,34 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void saveTaxTransaction(Integer accountId) throws Exception {
-        AccountResponse accountResponse = accountService.getAccountId(accountId);
-        Account account = accountResponseMapper.mapToAccount(accountResponse);
-        Double totalTransactionsAmount = transactionRepository.getTransactionsAmountByAccountId(accountId);
+    public void saveTaxTransaction(Integer walletId) throws Exception {
+        WalletResponse walletResponse = walletService.getWalletDetails(walletId);
+        Wallet wallet = walletResponseMapper.toEntity(walletResponse);
+        Double totalTransactionsAmount = transactionRepository.getTransactionsAmountByWalletId(walletId);
+        Double totalAccountBalance = wallet.getBalance();
 
         Transaction transaction = new Transaction();
 
+        transaction.setTransactionAmount(calculateGmf(totalTransactionsAmount, totalAccountBalance, walletId));
         transaction.setTransactionDescription("IMPUESTO GOBIERNO 4 X 1000");
         transaction.setCategory(categoryResponseMapper.mapToCategory(categoryService.getTaxCategory()));
         transaction.setTransactionType(TransactionType.EXPENSE.getValue());
         transaction.setTransactionDate(LocalDate.now());
         transaction.setTransactionTime(LocalTime.now());
-        transaction.setAccount(account);
+        transaction.setWallet(wallet);
 
         transactionRepository.save(transaction);
     }
 
     @Override
-    public ListTransactionResponse getTransactionsByAccountId(Integer accountId, int page, int size) throws Exception {
-        accountService.getAccountId(accountId);
+    public ListTransactionResponse getTransactionsByWalletId(Integer walletId, int page, int size) throws Exception {
+        walletService.getWalletDetails(walletId);
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "transactionDate", "transactionTime");
-        Page<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, pageable);
+        Page<Transaction> transactions = transactionRepository.findByWallet_WalletId(walletId, pageable);
 
         List<TransactionResponse> transactionResponses = transactionResponseMapper.mapToTransactionResponseList(transactions);
         ListTransactionResponse listTransactionResponse = new ListTransactionResponse();
-        Long totalTransactions = transactionRepository.countByAccount_AccountId(accountId);
+        Long totalTransactions = transactionRepository.countByWallet_WalletId(walletId);
 
         listTransactionResponse.setTotalTransactions(totalTransactions);
         listTransactionResponse.setTransactions(transactionResponses);
@@ -94,21 +97,21 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionResponse getTransactionDetails(int txnId, int accountId) throws Exception {
-        accountService.getAccountId(accountId);
+    public TransactionResponse getTransactionDetails(int txnId, int walletId) throws Exception {
+        walletService.getWalletDetails(walletId);
 
         if (!transactionRepository.existsByTransactionId(txnId)) {
             throw new TransactionDoesNotExists();
         }
-        Transaction transaction = transactionRepository.findByTransactionIdAndAccount_AccountId(txnId, accountId);
+        Transaction transaction = transactionRepository.findByTransactionIdAndWallet_WalletId(txnId, walletId);
 
         return transactionResponseMapper.mapToTransactionResponse(transaction);
     }
 
     @Override
-    public TotalAmountResponse getTotalIncomeByAccountId(int accountId, Integer year, Integer month) {
+    public TotalAmountResponse getTotalIncomeByWalletId(int walletId, Integer year, Integer month) {
         TotalAmountResponse totalAmountResponse = new TotalAmountResponse();
-        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByAccountId(accountId, year, month);
+        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByWalletId(walletId, year, month);
 
         if (totalAmount.isEmpty()) {
             return totalAmountResponse;
@@ -121,8 +124,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Boolean deleteAllTransactions(int accountId) {
-        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(accountId, Pageable.unpaged()).getContent();
+    public Boolean deleteAllTransactions(int walletId) {
+        List<Transaction> transactions = transactionRepository.findByWallet_WalletId(walletId, Pageable.unpaged()).getContent();
 
         if (!transactions.isEmpty()) {
             List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
@@ -154,7 +157,24 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionResponseMapper.mapToTransactionSummaryResponseList(monthlyTransactionsObject);
     }
 
-    private Double calculateGmf(Double totalTransactionsAmount, Double totalAccountBalance, Integer accountId) throws Exception {
+    private void setAccountBalance(Wallet wallet, Transaction transaction) throws Exception {
+        Double totalBalance = wallet.getBalance();
+        Double transactionAmount = transaction.getTransactionAmount();
+        String type = transaction.getTransactionType();
+
+        if (type.equalsIgnoreCase(TransactionType.INCOME.getValue())) {
+            totalBalance += transactionAmount;
+        }
+
+        if (type.equalsIgnoreCase(TransactionType.EXPENSE.getValue())
+                && hasAvailableBalance(totalBalance, transactionAmount)) {
+            totalBalance -= transactionAmount;
+        }
+
+        walletService.updateWalletBalance(totalBalance, wallet.getWalletId());
+    }
+
+    private Double calculateGmf(Double totalTransactionsAmount, Double totalAccountBalance, Integer walletId) throws Exception {
         if (totalTransactionsAmount == null || totalTransactionsAmount == 0) {
             throw new CustomArithmeticException();
         }
@@ -162,7 +182,7 @@ public class TransactionServiceImpl implements TransactionService {
         double gmf = (totalTransactionsAmount * 4) / 100;
         totalAccountBalance -= gmf;
 
-        //accountService.updateAccountBalance(totalAccountBalance, accountId);
+        walletService.updateWalletBalance(totalAccountBalance, walletId);
 
         return gmf;
     }
