@@ -53,8 +53,6 @@ public class TransactionServiceImpl implements TransactionService {
         Account account = accountResponseMapper.mapToAccount(accountResponse);
         Transaction transaction = transactionRequestMapper.mapToTransaction(transactionRequest);
 
-        setAccountBalance(account, transaction);
-
         transaction.setTransactionDate(LocalDate.now());
         transaction.setTransactionTime(LocalTime.now());
 
@@ -66,11 +64,9 @@ public class TransactionServiceImpl implements TransactionService {
         AccountResponse accountResponse = accountService.getAccountId(accountId);
         Account account = accountResponseMapper.mapToAccount(accountResponse);
         Double totalTransactionsAmount = transactionRepository.getTransactionsAmountByAccountId(accountId);
-        Double totalAccountBalance = account.getAccountBalance();
 
         Transaction transaction = new Transaction();
 
-        transaction.setTransactionAmount(calculateGmf(totalTransactionsAmount, totalAccountBalance, accountId));
         transaction.setTransactionDescription("IMPUESTO GOBIERNO 4 X 1000");
         transaction.setCategory(categoryResponseMapper.mapToCategory(categoryService.getTaxCategory()));
         transaction.setTransactionType(TransactionType.EXPENSE.getValue());
@@ -158,23 +154,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionResponseMapper.mapToTransactionSummaryResponseList(monthlyTransactionsObject);
     }
 
-    private void setAccountBalance(Account account, Transaction transaction) throws Exception {
-        Double totalBalance = account.getAccountBalance();
-        Double transactionAmount = transaction.getTransactionAmount();
-        String type = transaction.getTransactionType();
-
-        if (type.equalsIgnoreCase(TransactionType.INCOME.getValue())) {
-            totalBalance += transactionAmount;
-        }
-
-        if (type.equalsIgnoreCase(TransactionType.EXPENSE.getValue())
-                && hasAvailableBalance(totalBalance, transactionAmount)) {
-            totalBalance -= transactionAmount;
-        }
-
-        accountService.updateAccountBalance(totalBalance, account.getAccountId());
-    }
-
     private Double calculateGmf(Double totalTransactionsAmount, Double totalAccountBalance, Integer accountId) throws Exception {
         if (totalTransactionsAmount == null || totalTransactionsAmount == 0) {
             throw new CustomArithmeticException();
@@ -183,7 +162,7 @@ public class TransactionServiceImpl implements TransactionService {
         double gmf = (totalTransactionsAmount * 4) / 100;
         totalAccountBalance -= gmf;
 
-        accountService.updateAccountBalance(totalAccountBalance, accountId);
+        //accountService.updateAccountBalance(totalAccountBalance, accountId);
 
         return gmf;
     }
