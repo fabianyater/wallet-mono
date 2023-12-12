@@ -12,31 +12,31 @@ import java.util.List;
 
 
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
-    Transaction findByTransactionIdAndAccount_AccountId(Integer transactionId, Integer accountId);
+    Transaction findByTransactionIdAndWallet_WalletId(Integer transactionId, Integer walletId);
 
     boolean existsByTransactionId(Integer transactionId);
 
-    Page<Transaction> findByAccount_AccountId(Integer accountId, Pageable pageable);
+    Page<Transaction> findByWallet_WalletId(Integer walletId, Pageable pageable);
 
-    long countByAccount_AccountId(Integer accountId);
+    long countByWallet_WalletId(Integer walletId);
 
     @Query(value = "select SUM(t.transaction_amount) \n" +
             "from transactions t \n" +
             "inner join categories c \n" +
             "on t.category_id = c.id \n" +
-            "inner join accounts a \n" +
-            "on t.account_id = a.id \n" +
-            "where a.id = :accountId and t.transaction_type = 'expense' and c.category_name <> 'tax'", nativeQuery = true)
-    Double getTransactionsAmountByAccountId(@Param("accountId") Integer accountId);
+            "inner join wallets w \n" +
+            "on t.wallet_id = w.id \n" +
+            "where w.id = :walletId and t.transaction_type = 'expense' and c.category_name <> 'tax'", nativeQuery = true)
+    Double getTransactionsAmountByWalletId(@Param("walletId") Integer walletId);
 
     @Query(value = "select sum(t.transaction_amount) from transactions t \n" +
-            "inner join accounts a \n" +
-            "on t.account_id = a.id \n" +
-            "where a.id = :accountId\n" +
+            "inner join wallets w \n" +
+            "on t.account_id = w.id \n" +
+            "where w.id = :walletId\n" +
             "and extract(YEAR from t.transaction_date) = :year \n " +
             "and extract(MONTH from t.transaction_date) = :month \n " +
             "group by t.transaction_type", nativeQuery = true)
-    List<Double> getTotalTransactionAmountByAccountId(@Param("accountId") Integer accountId, @Param("year") Integer year, @Param("month") Integer month);
+    List<Double> getTotalTransactionAmountByWalletId(@Param("walletId") Integer walletId, @Param("year") Integer year, @Param("month") Integer month);
 
     @Query(value = "WITH days AS (" +
             "    SELECT date_trunc('day', serie) as date " +
