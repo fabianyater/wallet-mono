@@ -1,17 +1,17 @@
 package com.wallet.mono.controller;
 
-import com.wallet.mono.domain.dto.ListTransactionResponse;
-import com.wallet.mono.domain.dto.TotalAmountResponse;
-import com.wallet.mono.domain.dto.TransactionRequest;
-import com.wallet.mono.domain.dto.TransactionResponse;
+import com.wallet.mono.domain.dto.*;
 import com.wallet.mono.service.TransactionService;
 import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -34,13 +34,14 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("account/{accountId}")
+    @GetMapping("user/{userId}")
     public ResponseEntity<ApiResponse<ListTransactionResponse>> getTransactions(
-            @PathVariable("accountId") Integer accountId,
+            @PathVariable("userId") Integer userId,
+            @RequestParam("accountId") Integer accountId,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
         try {
-            ListTransactionResponse transactionResponses = transactionService.getTransactionsByAccountId(accountId, page - 1, size);
+            ListTransactionResponse transactionResponses = transactionService.getTransactionsByUserId(userId, accountId, page - 1, size);
             ApiResponse<ListTransactionResponse> apiResponse = new ApiResponse<>();
 
             ApiResponse.Pagination pagination = new ApiResponse.Pagination();
@@ -60,30 +61,78 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("{txnId}/account/{accountId}")
+    @GetMapping("{txnId}/wallet/{walletId}")
     public ResponseEntity<TransactionResponse> getTransactionDetails(
             @PathVariable("txnId") Integer txnId,
-            @PathVariable("accountId") Integer accountId) throws Exception {
-        return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, accountId), HttpStatus.OK);
+            @PathVariable("walletId") Integer walletId) throws Exception {
+        return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, walletId), HttpStatus.OK);
     }
 
     @GetMapping("total/account/{accountId}")
     public ResponseEntity<TotalAmountResponse> getTotalTransactionsAmount(
-            @PathVariable("accountId") Integer accountId) throws Exception {
-        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId), HttpStatus.OK);
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("year") Integer year,
+            @PathParam("month") Integer month) throws Exception {
+        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId, year, month), HttpStatus.OK);
     }
 
+    @GetMapping("stats/account/{accountId}")
+    public ResponseEntity<ApiResponse<List<TransactionsSummaryResponse>>> getStats(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @PathParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws Exception {
+        List<TransactionsSummaryResponse> transactionStadistics = transactionService.getTransactionStatistics(accountId, startDate, endDate);
+        ApiResponse<List<TransactionsSummaryResponse>> apiResponse = new ApiResponse<>();
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse<Boolean>> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
-        Boolean result = transactionService.deleteAllTransactions(accountId);
-        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
-        apiResponse.setData(result);
-        apiResponse.setMessage(!result ? "No hay transacciones para eliminar" : "Transacciones eliminidas");
+        apiResponse.setData(transactionStadistics);
         apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
         apiResponse.setPagination(null);
-
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
+    @GetMapping("monthly/summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<List<TransactionsSummaryResponse>>> getStats(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("year") int year,
+            @PathParam("month") int month) throws Exception {
+        List<TransactionsSummaryResponse> monthlyTransactionsSummary = transactionService.getDailyTransactionsSummary(accountId, year, month);
+        ApiResponse<List<TransactionsSummaryResponse>> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(monthlyTransactionsSummary);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("annual/summary/account/{accountId}")
+    public ResponseEntity<ApiResponse<List<TransactionsSummaryResponse>>> getStats(
+            @PathVariable("accountId") Integer accountId,
+            @PathParam("year") int year) throws Exception {
+        List<TransactionsSummaryResponse> monthlyTransactionsSummary = transactionService.getMonthlyTransactionsSummaryPerYear(accountId, year);
+        ApiResponse<List<TransactionsSummaryResponse>> apiResponse = new ApiResponse<>();
+
+        apiResponse.setData(monthlyTransactionsSummary);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setMessage("Todo ok");
+        apiResponse.setAdditionalInfo(null);
+        apiResponse.setPagination(null);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+//    @DeleteMapping
+//    public ResponseEntity<ApiResponse<Boolean>> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
+//        Boolean result = transactionService.deleteAllTransactions(accountId);
+//        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+//        apiResponse.setData(result);
+//        apiResponse.setMessage(!result ? "No hay transacciones para eliminar" : "Transacciones eliminidas");
+//        apiResponse.setStatus(HttpStatus.OK.value());
+//        apiResponse.setPagination(null);
+//
+//        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+//    }
 
 }

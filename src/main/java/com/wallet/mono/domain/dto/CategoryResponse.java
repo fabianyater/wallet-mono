@@ -10,5 +10,6 @@ public class CategoryResponse {
     private String categoryName;
     private String type;
     private boolean defaultCategory;
+    private String color;
     private int userId;
 }

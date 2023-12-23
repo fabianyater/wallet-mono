@@ -1,11 +1,10 @@
 package com.wallet.mono.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+
 
 @Getter
 @Setter
@@ -22,14 +21,9 @@ public class Account {
 
     @Column(nullable = false)
     private String accountCurrency;
-
-    private Double accountBalance;
-
-    @Column(name = "is_favorite")
-    private boolean isFavorite;
+    private String color;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
 }

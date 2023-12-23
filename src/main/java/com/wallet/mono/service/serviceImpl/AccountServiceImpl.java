@@ -3,27 +3,21 @@ package com.wallet.mono.service.serviceImpl;
 import com.wallet.mono.domain.dto.AccountBalanceResponse;
 import com.wallet.mono.domain.dto.AccountRequest;
 import com.wallet.mono.domain.dto.AccountResponse;
-import com.wallet.mono.domain.dto.FavoriteRequest;
 import com.wallet.mono.domain.mapper.AccountRequestMapper;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;
-import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.exception.AccountAlreadyExistsException;
 import com.wallet.mono.exception.AccountNotFoundException;
-import com.wallet.mono.exception.UnableToDeleteFavoriteAccount;
 import com.wallet.mono.exception.UserNotFoundException;
 import com.wallet.mono.repository.AccountRepository;
 import com.wallet.mono.repository.TransactionRepository;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Transactional
@@ -49,10 +43,6 @@ public class AccountServiceImpl implements AccountService {
 
         Account account = accountRequestMapper.mapToAccount(accountRequest);
 
-        if (accounts.isEmpty()) {
-            account.setFavorite(true);
-        }
-
         accountRepository.save(account);
 
     }
@@ -65,9 +55,15 @@ public class AccountServiceImpl implements AccountService {
 
         List<Account> accounts = accountRepository.findByUser_UserId(userId);
 
-        accounts.sort(Comparator.comparing(Account::isFavorite).reversed());
+        List<AccountResponse> accountResponses =  accountResponseMapper.mapToAccountResponseList(accounts);
 
-        return accountResponseMapper.mapToAccountResponseList(accounts);
+
+        for (AccountResponse accountResponse : accountResponses) {
+            AccountBalanceResponse accountBalanceResponse = getAccountBalance(Integer.parseInt(accountResponse.getAccountId()));
+            accountResponse.setAccountBalance(accountBalanceResponse.getAccountBalance());
+        }
+
+        return accountResponses;
     }
 
     @Override
@@ -102,7 +98,7 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountNotFoundException();
         }
 
-        Double balance = accountRepository.findAccountBalance(accountId);
+        Double balance = accountRepository.findGeneralAccountBalance(accountId);
         AccountBalanceResponse accountBalanceResponse = new AccountBalanceResponse();
         accountBalanceResponse.setAccountBalance(balance);
 
@@ -110,9 +106,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateAccountBalance(Double newBalance, int accountId) throws Exception {
-        getAccountId(accountId);
-        accountRepository.updateAccountBalanceByAccountId(newBalance, accountId);
+    public List<AccountBalanceResponse> getAccountBalanceByUserId(int userId) throws Exception {
+        List<Object[]> accountBalances = accountRepository.findGeneralAccountBalanceByUserId(userId);
+        return accountBalances.stream()
+                .map(accountBalance -> {
+                    AccountBalanceResponse accountBalanceResponse = new AccountBalanceResponse();
+                    accountBalanceResponse.setAccountBalance((Double) accountBalance[0]);
+                    return accountBalanceResponse;
+                })
+                .toList();
     }
 
     @Override
@@ -131,37 +133,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateDefaultAccount(FavoriteRequest favoriteRequest) throws Exception {
-        int userId = favoriteRequest.getUserId();
-        int accountId = favoriteRequest.getAccountId();
-
-        Optional<AccountResponse> oldDefaultAccount = getAccountsByUserId(userId)
-                .stream()
-                .filter(AccountResponse::isFavorite)
-                .findFirst();
-
-        oldDefaultAccount.ifPresent(accountResponse -> accountRepository
-                .updateIsFavoriteByAccountId(false, Integer.parseInt(accountResponse.getAccountId())));
-
-        accountRepository.updateIsFavoriteByAccountId(true, accountId);
-    }
-
-    @Override
-    public void deleteAccount(FavoriteRequest favoriteRequest) throws Exception {
-        AccountResponse accountResponse = getAccountDetails(favoriteRequest.getAccountId(), favoriteRequest.getUserId());
-
-        if (accountResponse.isFavorite()) {
-            throw new UnableToDeleteFavoriteAccount();
+    public boolean doesAccountExist(int accountId) throws AccountNotFoundException {
+        if (accountRepository.existsByAccountId(accountId)) {
+            return true;
+        } else {
+            throw new AccountNotFoundException();
         }
-
-        List<Transaction> transactions = transactionRepository.findByAccount_AccountId(favoriteRequest.getAccountId(), Pageable.unpaged()).getContent();
-
-        if (!transactions.isEmpty()) {
-            List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
-            transactionRepository.deleteAllById(transactionIds);
-        }
-
-        accountRepository.deleteById(favoriteRequest.getAccountId());
     }
 
     private boolean accountNameAlreadyExists(List<AccountResponse> accountResponses, String name) {

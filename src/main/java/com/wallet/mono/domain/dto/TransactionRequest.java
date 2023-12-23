@@ -10,5 +10,5 @@ public class TransactionRequest {
     private String description;
     private String type;
     private Integer categoryId;
-    private Integer accountId;
+    private Integer walletId;
 }

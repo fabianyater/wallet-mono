@@ -1,6 +1,7 @@
 package com.wallet.mono.configuration.jwt;
 
 import com.wallet.mono.service.serviceImpl.UserServiceImpl;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,21 +36,28 @@ public class JwtFilters extends OncePerRequestFilter {
         response.setHeader("Allow", "PUT, POST, GET, DELETE, PATCH, OPTIONS");
 
         String token = request.getHeader("Authorization");
-        String username = null;
-        if (token != null) {
-            username = jwtUtils.extractUserName(token);
-        }
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
-            if (jwtUtils.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        try {
+            String username = null;
 
+            if (token != null) {
+                username = jwtUtils.extractUserName(token);
             }
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailService.loadUserByUsername(username);
+                if (jwtUtils.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken
+                            .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+                }
+            }
+        } catch (ExpiredJwtException expiredJwtException) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token Expired");
+            return;
         }
+
         filterChain.doFilter(request, response);
     }
 }
