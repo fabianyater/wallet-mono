@@ -14,6 +14,7 @@ public class WalletResponse implements Serializable {
     String type;
     String currency;
     Double balance;
+    String color;
     Boolean isLimited;
     Double limitValue;
     Boolean isExcluded;
