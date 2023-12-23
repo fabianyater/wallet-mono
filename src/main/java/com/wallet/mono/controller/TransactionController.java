@@ -34,13 +34,14 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("wallet/{walletId}")
+    @GetMapping("user/{userId}")
     public ResponseEntity<ApiResponse<ListTransactionResponse>> getTransactions(
-            @PathVariable("walletId") Integer walletId,
+            @PathVariable("userId") Integer userId,
+            @RequestParam("accountId") Integer accountId,
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) throws Exception {
         try {
-            ListTransactionResponse transactionResponses = transactionService.getTransactionsByWalletId(walletId, page - 1, size);
+            ListTransactionResponse transactionResponses = transactionService.getTransactionsByUserId(userId, accountId, page - 1, size);
             ApiResponse<ListTransactionResponse> apiResponse = new ApiResponse<>();
 
             ApiResponse.Pagination pagination = new ApiResponse.Pagination();
@@ -67,12 +68,12 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.getTransactionDetails(txnId, walletId), HttpStatus.OK);
     }
 
-    @GetMapping("total/wallet/{walletId}")
+    @GetMapping("total/account/{accountId}")
     public ResponseEntity<TotalAmountResponse> getTotalTransactionsAmount(
-            @PathVariable("walletId") Integer walletId,
+            @PathVariable("accountId") Integer accountId,
             @PathParam("year") Integer year,
             @PathParam("month") Integer month) throws Exception {
-        return new ResponseEntity<>(transactionService.getTotalIncomeByWalletId(walletId, year, month), HttpStatus.OK);
+        return new ResponseEntity<>(transactionService.getTotalIncomeByAccountId(accountId, year, month), HttpStatus.OK);
     }
 
     @GetMapping("stats/account/{accountId}")
@@ -122,16 +123,16 @@ public class TransactionController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse<Boolean>> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
-        Boolean result = transactionService.deleteAllTransactions(accountId);
-        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
-        apiResponse.setData(result);
-        apiResponse.setMessage(!result ? "No hay transacciones para eliminar" : "Transacciones eliminidas");
-        apiResponse.setStatus(HttpStatus.OK.value());
-        apiResponse.setPagination(null);
-
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
-    }
+//    @DeleteMapping
+//    public ResponseEntity<ApiResponse<Boolean>> deleteAllTransactionsByAccountId(@RequestBody int accountId) {
+//        Boolean result = transactionService.deleteAllTransactions(accountId);
+//        ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+//        apiResponse.setData(result);
+//        apiResponse.setMessage(!result ? "No hay transacciones para eliminar" : "Transacciones eliminidas");
+//        apiResponse.setStatus(HttpStatus.OK.value());
+//        apiResponse.setPagination(null);
+//
+//        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+//    }
 
 }

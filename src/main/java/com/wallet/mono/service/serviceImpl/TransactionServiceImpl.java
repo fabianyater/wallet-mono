@@ -81,14 +81,14 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public ListTransactionResponse getTransactionsByWalletId(Integer walletId, int page, int size) throws Exception {
-        walletService.getWalletDetails(walletId);
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "transactionDate", "transactionTime");
-        Page<Transaction> transactions = transactionRepository.findByWallet_WalletId(walletId, pageable);
+    public ListTransactionResponse getTransactionsByUserId(Integer userId, Integer accountId, int page, int size) throws Exception {
+        accountService.getAccountId(accountId);
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "transaction_date", "time");
+        Page<Object[]> transactions = transactionRepository.getAllTransactions(userId, accountId, pageable);
 
-        List<TransactionResponse> transactionResponses = transactionResponseMapper.mapToTransactionResponseList(transactions);
+        List<TransactionResponse> transactionResponses = transactionResponseMapper.mapToObjectArrayList(transactions);
         ListTransactionResponse listTransactionResponse = new ListTransactionResponse();
-        Long totalTransactions = transactionRepository.countByWallet_WalletId(walletId);
+        Long totalTransactions = transactionRepository.countTransactionByUserId(userId);
 
         listTransactionResponse.setTotalTransactions(totalTransactions);
         listTransactionResponse.setTransactions(transactionResponses);
@@ -109,9 +109,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TotalAmountResponse getTotalIncomeByWalletId(int walletId, Integer year, Integer month) {
+    public TotalAmountResponse getTotalIncomeByAccountId(int accountId, Integer year, Integer month) {
         TotalAmountResponse totalAmountResponse = new TotalAmountResponse();
-        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByWalletId(walletId, year, month);
+        List<Double> totalAmount = transactionRepository.getTotalTransactionAmountByWalletId(accountId, year, month);
 
         if (totalAmount.isEmpty()) {
             return totalAmountResponse;
@@ -123,18 +123,18 @@ public class TransactionServiceImpl implements TransactionService {
         return totalAmountResponse;
     }
 
-    @Override
-    public Boolean deleteAllTransactions(int walletId) {
-        List<Transaction> transactions = transactionRepository.findByWallet_WalletId(walletId, Pageable.unpaged()).getContent();
-
-        if (!transactions.isEmpty()) {
-            List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
-            transactionRepository.deleteAllById(transactionIds);
-            return true;
-        }
-
-        return false;
-    }
+//    @Override
+//    public Boolean deleteAllTransactions(int walletId) {
+//        List<Transaction> transactions = transactionRepository.findByWallet_WalletId(walletId, Pageable.unpaged()).getContent();
+//
+//        if (!transactions.isEmpty()) {
+//            List<Integer> transactionIds = transactions.stream().map(Transaction::getTransactionId).toList();
+//            transactionRepository.deleteAllById(transactionIds);
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     @Override
     public List<TransactionsSummaryResponse> getTransactionStatistics(int accountId, Date startDate, Date endDate) {
