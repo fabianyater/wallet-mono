@@ -19,8 +19,12 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Query(value = "SELECT c.category_name, SUM(t.transaction_amount) AS total_income, c.color " +
             "FROM categories c " +
             "INNER JOIN transactions t ON c.id = t.category_id " +
+            "INNER JOIN wallets w " +
+            "ON t.wallet_id = w.id " +
+            "INNER JOIN accounts a " +
+            "ON w.account_id = a.id " +
             "WHERE t.transaction_type = :type " +
-            "AND t.account_id = :accountId " +
+            "AND a.id = :accountId " +
             "AND t.transaction_date >= CAST(:startDate AS timestamp) " +
             "AND t.transaction_date < CAST(:endDate AS timestamp) " +
             "GROUP BY c.category_name, c.color " +
