@@ -21,6 +21,7 @@ public class Account {
 
     @Column(nullable = false)
     private String accountCurrency;
+    private String color;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

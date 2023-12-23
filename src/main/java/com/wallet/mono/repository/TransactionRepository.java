@@ -16,9 +16,29 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     boolean existsByTransactionId(Integer transactionId);
 
-    Page<Transaction> findByWallet_WalletId(Integer walletId, Pageable pageable);
+    @Query(value = "select t.txn_id, c.category_name, c.color, t.transaction_amount, t.transaction_date, t.transaction_type, t.time, t.transaction_description, w.name\n" +
+            "from transactions t \n" +
+            "inner join categories c \n" +
+            "on t.category_id = c.id \n" +
+            "inner join wallets w \n" +
+            "on t.wallet_id = w.id \n" +
+            "inner join accounts a \n" +
+            "on w.account_id = a.id \n" +
+            "inner join users u \n" +
+            "on a.user_id = u.id where u.id = :userId and a.id = :accountId", nativeQuery = true)
+    Page<Object[]> getAllTransactions(@Param("userId") Integer userId, Integer accountId, Pageable pageable);
 
-    long countByWallet_WalletId(Integer walletId);
+    @Query(value = "select count(*)\n" +
+            "from transactions t \n" +
+            "inner join categories c \n" +
+            "on t.category_id = c.id \n" +
+            "inner join wallets w \n" +
+            "on t.wallet_id = w.id \n" +
+            "inner join accounts a \n" +
+            "on w.account_id = a.id \n" +
+            "inner join users u \n" +
+            "on a.user_id = u.id where u.id = :userId", nativeQuery = true)
+    long countTransactionByUserId(@Param("userId") Integer userId);
 
     @Query(value = "select SUM(t.transaction_amount) \n" +
             "from transactions t \n" +
@@ -31,12 +51,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 
     @Query(value = "select sum(t.transaction_amount) from transactions t \n" +
             "inner join wallets w \n" +
-            "on t.account_id = w.id \n" +
-            "where w.id = :walletId\n" +
+            "on t.wallet_id = w.id \n" +
+            "inner join accounts a \n" +
+            "on w.account_id = a.id \n" +
             "and extract(YEAR from t.transaction_date) = :year \n " +
             "and extract(MONTH from t.transaction_date) = :month \n " +
+            "where a.id = :accountId \n" +
             "group by t.transaction_type", nativeQuery = true)
-    List<Double> getTotalTransactionAmountByWalletId(@Param("walletId") Integer walletId, @Param("year") Integer year, @Param("month") Integer month);
+    List<Double> getTotalTransactionAmountByWalletId(@Param("accountId") Integer accountId, @Param("year") Integer year, @Param("month") Integer month);
 
     @Query(value = "WITH days AS (" +
             "    SELECT date_trunc('day', serie) as date " +
@@ -48,9 +70,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             "    COALESCE(SUM(CASE WHEN t.transaction_type = 'expense' THEN t.transaction_amount ELSE 0 END), 0) as totalExpense " +
             "FROM days d " +
             "LEFT JOIN transactions t ON date_trunc('day', t.transaction_date) = d.date " +
+            "LEFT JOIN wallets w ON t.wallet_id = w.id " +
+            "LEFT JOIN accounts a ON w.account_id = a.id " +
+            "WHERE a.id = :accountId " +
             "AND t.transaction_date >= CAST(:startDate AS timestamp) " +
             "AND t.transaction_date < CAST(:endDate AS timestamp) " +
-            "AND t.account_id = :accountId " +
             "AND (t.transaction_type = 'income' OR t.transaction_type = 'expense') " +
             "GROUP BY d.date " +
             "ORDER BY d.date", nativeQuery = true)
@@ -68,7 +92,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             "       COALESCE(SUM(CASE WHEN t.transaction_type = 'income' THEN t.transaction_amount ELSE 0 END), 0) as totalIncome, " +
             "       COALESCE(SUM(CASE WHEN t.transaction_type = 'expense' THEN t.transaction_amount ELSE 0 END), 0) as totalExpense " +
             "FROM date_series ds " +
-            "LEFT JOIN transactions t ON ds.day = DATE(t.transaction_date) AND t.account_id = :accountId " +
+            "LEFT JOIN transactions t ON ds.day = DATE(t.transaction_date) " +
+            "LEFT JOIN wallets w ON t.wallet_id = w.id " +
+            "LEFT JOIN accounts a ON w.account_id = a.id " +
+            "AND w.account_id = :accountId " +
             "WHERE DATE_PART('year', ds.day) = :year AND DATE_PART('month', ds.day) = :month " +
             "GROUP BY ds.day " +
             "ORDER BY ds.day", nativeQuery = true)
@@ -86,7 +113,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
             "       COALESCE(SUM(CASE WHEN t.transaction_type = 'income' THEN t.transaction_amount ELSE 0 END), 0) as totalIncome, " +
             "       COALESCE(SUM(CASE WHEN t.transaction_type = 'expense' THEN t.transaction_amount ELSE 0 END), 0) as totalExpense " +
             "FROM month_series ms " +
-            "LEFT JOIN transactions t ON DATE_TRUNC('month', t.transaction_date) = ms.month AND t.account_id = :accountId " +
+            "LEFT JOIN transactions t ON DATE_TRUNC('month', t.transaction_date) = ms.month " +
+            "LEFT JOIN wallets w ON t.wallet_id = w.id " +
+            "LEFT JOIN accounts a ON w.account_id = a.id " +
+            "AND w.account_id = :accountId " +
             "WHERE EXTRACT(YEAR FROM ms.month) = :year " +
             "GROUP BY ms.month " +
             "ORDER BY ms.month", nativeQuery = true)

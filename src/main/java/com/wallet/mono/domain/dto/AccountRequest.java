@@ -9,5 +9,6 @@ public class AccountRequest {
     private String accountName;
     private String accountCurrency;
     private Double accountBalance;
+    private String color;
     private String userId;
 }

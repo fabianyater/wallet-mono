@@ -55,7 +55,15 @@ public class AccountServiceImpl implements AccountService {
 
         List<Account> accounts = accountRepository.findByUser_UserId(userId);
 
-        return accountResponseMapper.mapToAccountResponseList(accounts);
+        List<AccountResponse> accountResponses =  accountResponseMapper.mapToAccountResponseList(accounts);
+
+
+        for (AccountResponse accountResponse : accountResponses) {
+            AccountBalanceResponse accountBalanceResponse = getAccountBalance(Integer.parseInt(accountResponse.getAccountId()));
+            accountResponse.setAccountBalance(accountBalanceResponse.getAccountBalance());
+        }
+
+        return accountResponses;
     }
 
     @Override
@@ -95,6 +103,18 @@ public class AccountServiceImpl implements AccountService {
         accountBalanceResponse.setAccountBalance(balance);
 
         return accountBalanceResponse;
+    }
+
+    @Override
+    public List<AccountBalanceResponse> getAccountBalanceByUserId(int userId) throws Exception {
+        List<Object[]> accountBalances = accountRepository.findGeneralAccountBalanceByUserId(userId);
+        return accountBalances.stream()
+                .map(accountBalance -> {
+                    AccountBalanceResponse accountBalanceResponse = new AccountBalanceResponse();
+                    accountBalanceResponse.setAccountBalance((Double) accountBalance[0]);
+                    return accountBalanceResponse;
+                })
+                .toList();
     }
 
     @Override

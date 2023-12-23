@@ -79,6 +79,5 @@ public class WalletServiceImpl implements WalletService {
             walletRepository.updateBalanceByWalletId(newBalance, walletId);
         }
 
-        throw new AccountNotFoundException();
     }
 }

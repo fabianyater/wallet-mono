@@ -23,6 +23,7 @@ public class Wallet {
 
     @Column(nullable = false)
     private String currency;
+    private String color;
 
     private Double balance;
 

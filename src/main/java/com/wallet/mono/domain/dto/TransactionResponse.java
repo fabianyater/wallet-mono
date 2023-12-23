@@ -12,5 +12,7 @@ public class TransactionResponse {
     private String type;
     private String date;
     private String time;
-    private CategoryResponse category;
+    private String category;
+    private String color;
+    private String walletName;
 }
