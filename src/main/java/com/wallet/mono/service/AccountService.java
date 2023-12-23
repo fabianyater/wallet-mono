@@ -13,6 +13,7 @@ public interface AccountService {
     AccountResponse getAccountId(int accountId) throws Exception;
     AccountResponse getAccountDetails(int accountId, int userId) throws Exception;
     AccountBalanceResponse getAccountBalance(int accountId) throws Exception;
+    List<AccountBalanceResponse> getAccountBalanceByUserId(int userId) throws Exception;
     void updateAccount(int accountId, AccountRequest accountRequest) throws Exception;
     boolean doesAccountExist(int accountId) throws AccountNotFoundException;
 }
