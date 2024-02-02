@@ -14,8 +14,6 @@ public class WalletRequest {
     String currency;
     String color;
     Double balance;
-    Boolean isLimited;
-    Double limitValue;
     Boolean isExcluded;
     Integer accountId;
 }

@@ -14,5 +14,6 @@ public interface WalletService {
     WalletResponse getWalletDetails(Integer walletId);
     Double getWalletBalance(Integer walletId);
     void updateWalletBalance(Double newBalance, int walletId) throws Exception;
+    void updateWalletByWalletId(int walletId, WalletRequest walletRequest) throws Exception;
 
 }

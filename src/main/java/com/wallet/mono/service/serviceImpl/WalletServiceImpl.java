@@ -28,7 +28,7 @@ public class WalletServiceImpl implements WalletService {
     public void createWallet(WalletRequest walletRequest) throws AccountNotFoundException {
         boolean account = accountService.doesAccountExist(walletRequest.getAccountId());
 
-        if(account) {
+        if (account) {
             Wallet wallet = walletRequestMapper.toEntity(walletRequest);
             walletRepository.save(wallet);
         }
@@ -79,5 +79,26 @@ public class WalletServiceImpl implements WalletService {
             walletRepository.updateBalanceByWalletId(newBalance, walletId);
         }
 
+    }
+
+    @Override
+    public void updateWalletByWalletId(int walletId, WalletRequest walletRequest) throws Exception {
+        WalletResponse walletResponse = getWalletDetails(walletId);
+
+        if (walletResponse != null) {
+            walletResponse.setName(walletRequest.getName());
+            walletResponse.setType(walletRequest.getType());
+            walletResponse.setColor(walletRequest.getColor());
+            walletResponse.setCurrency(walletRequest.getCurrency());
+            walletResponse.setBalance(walletRequest.getBalance());
+            walletResponse.setIsExcluded(walletRequest.getIsExcluded());
+            walletResponse.setAccountId(walletRequest.getAccountId());
+
+            Wallet wallet = walletResponseMapper.toEntity(walletResponse);
+
+            walletRepository.save(wallet    );
+        } else {
+            throw new Exception("Wallet not found");
+        }
     }
 }

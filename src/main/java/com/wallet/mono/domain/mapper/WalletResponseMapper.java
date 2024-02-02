@@ -6,6 +6,8 @@ import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface WalletResponseMapper {
+
+    @Mapping(target = "account.accountId", source = "accountId")
     Wallet toEntity(WalletResponse walletResponse);
 
     WalletResponse toDto(Wallet wallet);

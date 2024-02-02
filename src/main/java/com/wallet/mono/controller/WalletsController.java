@@ -34,4 +34,17 @@ public class WalletsController {
     public ResponseEntity<List<WalletResponse>> getWalletsByAccountId(@PathVariable("accountId") Integer accountId) throws Exception {
         return new ResponseEntity<>(walletService.getAllWallets(accountId), HttpStatus.OK);
     }
+
+    @PutMapping("update/{id}")
+    public ResponseEntity<ApiResponse<Void>> updateWallet(@PathVariable("id") Integer walletId, @RequestBody WalletRequest walletRequest) throws Exception {
+        walletService.updateWalletByWalletId(walletId, walletRequest);
+        ApiResponse<Void> apiResponse = new ApiResponse<>();
+        apiResponse.setMessage("Billetera actualizada correctamente");
+        apiResponse.setStatus(HttpStatus.CREATED.value());
+        apiResponse.setData(null);
+        apiResponse.setPagination(null);
+        apiResponse.setAdditionalInfo(null);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

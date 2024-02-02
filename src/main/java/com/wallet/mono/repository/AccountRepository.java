@@ -19,7 +19,7 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     @Query(value = "select sum(w.balance), a.account_name from wallets w " +
             "inner join accounts a on w.account_id = a.id " +
             "inner join users u on a.user_id = u.id " +
-            "where u.id = :userId " +
+            "where u.id = :userId and w.is_excluded = false " +
             "group by a.account_name", nativeQuery = true)
     List<Object[]> findGeneralAccountBalanceByUserId(@Param("userId") Integer userId);
 }

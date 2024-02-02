@@ -1,13 +1,15 @@
 package com.wallet.mono.domain.dto;
 
-import lombok.Value;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
 /**
  * DTO for {@link com.wallet.mono.domain.model.Wallet}
  */
-@Value
+@Getter
+@Setter
 public class WalletResponse implements Serializable {
     Integer walletId;
     String name;
@@ -15,7 +17,6 @@ public class WalletResponse implements Serializable {
     String currency;
     Double balance;
     String color;
-    Boolean isLimited;
-    Double limitValue;
     Boolean isExcluded;
+    Integer accountId;
 }
