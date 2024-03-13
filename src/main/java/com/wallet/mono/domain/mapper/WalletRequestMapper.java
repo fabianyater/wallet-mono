@@ -1,6 +1,6 @@
 package com.wallet.mono.domain.mapper;
 
-import com.wallet.mono.domain.dto.WalletRequest;
+import com.wallet.mono.domain.dto.request.WalletRequest;
 import com.wallet.mono.domain.model.Wallet;
 import org.mapstruct.*;
 

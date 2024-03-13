@@ -1,8 +1,8 @@
 package com.wallet.mono.service.serviceImpl;
 
-import com.wallet.mono.domain.dto.AccountBalanceResponse;
-import com.wallet.mono.domain.dto.AccountRequest;
-import com.wallet.mono.domain.dto.AccountResponse;
+import com.wallet.mono.domain.dto.response.AccountBalanceResponse;
+import com.wallet.mono.domain.dto.request.AccountRequest;
+import com.wallet.mono.domain.dto.response.AccountResponse;
 import com.wallet.mono.domain.mapper.AccountRequestMapper;
 import com.wallet.mono.domain.mapper.AccountResponseMapper;
 import com.wallet.mono.domain.model.Account;

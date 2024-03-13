@@ -1,4 +1,4 @@
-package com.wallet.mono.domain.dto;
+package com.wallet.mono.domain.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,15 +1,14 @@
-package com.wallet.mono.domain.dto;
+package com.wallet.mono.domain.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AccountResponse {
-    private String accountId;
+public class AccountRequest {
     private String accountName;
     private String accountCurrency;
     private Double accountBalance;
     private String color;
-    private int userId;
+    private String userId;
 }

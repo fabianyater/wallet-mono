@@ -1,6 +1,6 @@
 package com.wallet.mono.service.serviceImpl;
 
-import com.wallet.mono.domain.dto.UserRequest;
+import com.wallet.mono.domain.dto.request.UserRequest;
 import com.wallet.mono.domain.mapper.UserRequestMapper;
 import com.wallet.mono.domain.model.User;
 import com.wallet.mono.exception.UserNameAlreadyExistsException;

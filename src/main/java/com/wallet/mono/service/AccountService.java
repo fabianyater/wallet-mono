@@ -1,8 +1,8 @@
 package com.wallet.mono.service;
 
-import com.wallet.mono.domain.dto.AccountBalanceResponse;
-import com.wallet.mono.domain.dto.AccountRequest;
-import com.wallet.mono.domain.dto.AccountResponse;
+import com.wallet.mono.domain.dto.response.AccountBalanceResponse;
+import com.wallet.mono.domain.dto.request.AccountRequest;
+import com.wallet.mono.domain.dto.response.AccountResponse;
 import com.wallet.mono.exception.AccountNotFoundException;
 
 import java.util.List;

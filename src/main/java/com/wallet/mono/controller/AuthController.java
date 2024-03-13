@@ -1,8 +1,8 @@
 package com.wallet.mono.controller;
 
-import com.wallet.mono.domain.dto.TokenResponse;
-import com.wallet.mono.domain.dto.UserRequest;
-import com.wallet.mono.domain.dto.UserResponse;
+import com.wallet.mono.domain.dto.response.TokenResponse;
+import com.wallet.mono.domain.dto.request.UserRequest;
+import com.wallet.mono.domain.dto.response.UserResponse;
 import com.wallet.mono.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

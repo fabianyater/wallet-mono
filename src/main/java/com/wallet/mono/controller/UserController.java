@@ -1,6 +1,6 @@
 package com.wallet.mono.controller;
 
-import com.wallet.mono.domain.dto.UserRequest;
+import com.wallet.mono.domain.dto.request.UserRequest;
 import com.wallet.mono.service.UserService;
 import com.wallet.mono.utils.ApiResponse;
 import lombok.AllArgsConstructor;

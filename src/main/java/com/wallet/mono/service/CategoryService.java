@@ -1,6 +1,10 @@
 package com.wallet.mono.service;
 
 import com.wallet.mono.domain.dto.*;
+import com.wallet.mono.domain.dto.request.CategoryDeleteRequest;
+import com.wallet.mono.domain.dto.request.CategoryRequest;
+import com.wallet.mono.domain.dto.response.AdditionalInfoResponse;
+import com.wallet.mono.domain.dto.response.CategoryResponse;
 import com.wallet.mono.exception.CategoryAlreadyDoesNotExists;
 import com.wallet.mono.exception.CategoryAlreadyExists;
 import com.wallet.mono.exception.DefatulCategory;

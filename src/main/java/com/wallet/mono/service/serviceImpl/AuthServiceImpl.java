@@ -1,10 +1,10 @@
 package com.wallet.mono.service.serviceImpl;
 
 import com.wallet.mono.configuration.jwt.JwtUtils;
-import com.wallet.mono.domain.dto.AccountResponse;
-import com.wallet.mono.domain.dto.TokenResponse;
-import com.wallet.mono.domain.dto.UserRequest;
-import com.wallet.mono.domain.dto.UserResponse;
+import com.wallet.mono.domain.dto.response.AccountResponse;
+import com.wallet.mono.domain.dto.response.TokenResponse;
+import com.wallet.mono.domain.dto.request.UserRequest;
+import com.wallet.mono.domain.dto.response.UserResponse;
 import com.wallet.mono.service.AccountService;
 import com.wallet.mono.service.AuthService;
 import com.wallet.mono.service.UserService;

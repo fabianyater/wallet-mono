@@ -1,4 +1,4 @@
-package com.wallet.mono.domain.dto;
+package com.wallet.mono.domain.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +18,8 @@ public class WalletResponse implements Serializable {
     Double balance;
     String color;
     Boolean isExcluded;
+    private Double creditLimit;
+    private int statementDay;
+    private int duePaymentDay;
     Integer accountId;
 }

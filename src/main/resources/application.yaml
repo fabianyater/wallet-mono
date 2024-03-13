@@ -15,19 +15,23 @@ spring:
 ---
 
 spring:
-  profiles: dev
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/wallet
     username: postgres
     password: postgres
+  config:
+    activate:
+      on-profile: dev
 
 ---
 
 spring:
-  profiles: prod
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${CONNECTION_STRING}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+  config:
+    activate:
+      on-profile: prod

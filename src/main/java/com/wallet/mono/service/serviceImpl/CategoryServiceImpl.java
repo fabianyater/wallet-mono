@@ -1,6 +1,10 @@
 package com.wallet.mono.service.serviceImpl;
 
 import com.wallet.mono.domain.dto.*;
+import com.wallet.mono.domain.dto.request.CategoryDeleteRequest;
+import com.wallet.mono.domain.dto.request.CategoryRequest;
+import com.wallet.mono.domain.dto.response.AdditionalInfoResponse;
+import com.wallet.mono.domain.dto.response.CategoryResponse;
 import com.wallet.mono.domain.mapper.CategoryRequestMapper;
 import com.wallet.mono.domain.mapper.CategoryResponseMapper;
 import com.wallet.mono.domain.model.Category;

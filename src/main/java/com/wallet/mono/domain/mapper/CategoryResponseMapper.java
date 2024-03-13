@@ -1,6 +1,6 @@
 package com.wallet.mono.domain.mapper;
 
-import com.wallet.mono.domain.dto.CategoryResponse;
+import com.wallet.mono.domain.dto.response.CategoryResponse;
 import com.wallet.mono.domain.dto.CategorySummary;
 import com.wallet.mono.domain.model.Category;
 import org.mapstruct.Mapper;

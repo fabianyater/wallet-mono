@@ -26,6 +26,9 @@ public class Wallet {
     private String color;
 
     private Double balance;
+    private Double creditLimit;
+    private int statementDay;
+    private int duePaymentDay;
 
     @Column(nullable = false)
     private Boolean isExcluded;

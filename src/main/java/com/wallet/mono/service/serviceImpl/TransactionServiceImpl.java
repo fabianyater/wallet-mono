@@ -1,6 +1,7 @@
 package com.wallet.mono.service.serviceImpl;
 
-import com.wallet.mono.domain.dto.*;
+import com.wallet.mono.domain.dto.request.TransactionRequest;
+import com.wallet.mono.domain.dto.response.*;
 import com.wallet.mono.domain.mapper.*;
 import com.wallet.mono.domain.model.Transaction;
 import com.wallet.mono.domain.model.Wallet;
